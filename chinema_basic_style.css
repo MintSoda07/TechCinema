@@ -1,0 +1,158 @@
+/* 기본 스타일 */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #222;
+    color: white;
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    flex-direction: column; /* 방향키 UI를 아래로 배치 */
+    position: absolute;
+}
+
+/* 비디오 선반 (원근 효과) */
+.video-shelf {
+    display: flex;
+    gap: 20px;
+    height: 100%;
+    perspective: 500px; /* 원근감 추가 */
+    width: 180%;
+    overflow: hidden;
+    transition: transform 1s, opacity 0.5s;
+}
+
+/* 비디오 테이프 스타일 */
+.video-tape {
+    width: 120px;
+    height: 400px;
+    background-color: black;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: end;
+    font-weight: bold;
+    color: white;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: transform 1s, opacity 0.5s;
+    transform: translateY(-280px);
+    box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.2), 
+                0 5px 10px rgba(0, 0, 0, 0.5);
+    perspective: 500px; /* 3D 원근감 추가 */
+}
+/* 방향키 UI */
+.arrow-buttons {
+    position: absolute;
+    bottom: 50px; /* 화면 아래쪽에 배치 */
+    left:170px;
+    display: flex;
+    justify-content: left;
+    width: 100%;
+}
+
+.arrow-button {
+    background-color: #444;
+    border: none;
+    color: white;
+    font-size: 24px;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.arrow-button.active{
+    background-color: #666;  /* 버튼 색이 변할 색 */
+}
+.arrow-button:hover {
+    background-color: #666;
+}
+
+/* 위, 아래 버튼 UI */
+.vertical-buttons {
+    position: absolute;
+    bottom: 140px; /* 화면 아래쪽에 배치 */
+    left:220px;
+    display: flex;
+    justify-content: left;
+    width: 100%;
+    transition: background-color 0.3s ease;
+}
+
+.up-arrow, .down-arrow {
+    background-color: #444;
+    border: none;
+    color: white;
+    font-size: 24px;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.up-arrow:hover, .down-arrow:hover {
+    background-color: #666;
+}
+
+.up-arrow.active, .down-arrow.active {
+    background-color: #666;
+}
+/* 확대된 비디오 */
+.video-tape.active {
+    transform:translateY(10px);
+    z-index: 2;
+}
+
+/* 비디오가 옆으로 펼쳐지는 애니메이션 */
+.video-tape.enlarged {
+    transform:translateY(150px);
+    opacity: 1;
+    transition: transform 1s, opacity 1s;
+}
+.video-tape .label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-90deg); /* 텍스트를 세로로 회전 */
+    white-space: nowrap; /* 텍스트가 한 줄로 표시되도록 설정 */
+    font-size: 22px;
+    font-weight: bold;
+    color: white;
+    text-transform: uppercase;
+}
+/* 비디오 헤드 */
+.video-head {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+}
+/* 비디오 옆면 */
+.video-side {
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%); /* 세로 가운데 정렬 */
+    font-size: 14px;
+    color: white;
+    background-color: rgba(0, 0, 0);
+    padding: 10px;
+    border-radius: 5px;
+    width: 0px;
+    height:380px;
+    text-align: center;
+    visibility: collapse;
+    transition: width 0.5s, visibility 0.5s; /* width와 visibility 전환 추가 */
+}
+.video-tape.enlarged .video-side {
+    visibility: visible;  /* 보이게 설정 */
+    width: 800px; /* 크기를 확장 */
+    transition: width 0.5s, visibility 0s; /* width 변화에 즉시 반응하도록 설정 */
+}
+
+.empty_space{
+    width: 900px;
+}
