@@ -12,13 +12,25 @@ document.addEventListener("DOMContentLoaded", function () {
         tapes.forEach((tape, index) => {
             const diff = index - currentIndex;
             tape.classList.remove("active", "left", "right", "far-left", "far-right", "enlarged");
-
+    
             if (diff === 0 && isVideoSelected) {
                 tape.classList.add("active", "enlarged");
-                console.log(`선택되어 있는 비디오 : ${tape.dataset.title}`);  
+                console.log(`선택되어 있는 비디오 : ${tape.dataset.title}`);
+    
+                // 오디오 & 비디오 자동 재생
+                const video = tape.querySelector("video");
+                const audio = tape.querySelector("audio");
+                if (video) {
+                    video.currentTime = 0;
+                    video.play().catch(err => console.log("비디오 재생 오류:", err));
+                }
+                if (audio) {
+                    audio.currentTime = 0;
+                    audio.play().catch(err => console.log("오디오 재생 오류:", err));
+                }
             } else if (diff === 0) {
-                tape.classList.add("active"); 
-                console.log(`하이라이트 비디오: ${tape.dataset.title}`);  
+                tape.classList.add("active");
+                console.log(`하이라이트 비디오: ${tape.dataset.title}`);
             } else if (diff === -1) {
                 tape.classList.add("left");
             } else if (diff === 1) {
@@ -28,8 +40,8 @@ document.addEventListener("DOMContentLoaded", function () {
             } else {
                 tape.classList.add("far-right");
             }
-            // transform 속성을 JavaScript로 직접 설정
-            tape.parentElement.style.transform = `translateX(${diff * 140 - 1000}px)`
+    
+            tape.parentElement.style.transform = `translateX(${diff * 140 - 1000}px)`;
         });
     }
 
@@ -40,7 +52,6 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!isVideoSelected && currentIndex > 0) {
             currentIndex--;
             updateTapes();
-            applyBlinkEffect(leftArrow);
         }
     });
 
@@ -48,7 +59,6 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!isVideoSelected && currentIndex < tapes.length - 1) {
             currentIndex++;
             updateTapes();
-            applyBlinkEffect(rightArrow);
         }
     });
 
@@ -57,18 +67,17 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!isVideoSelected) {
             isVideoSelected = true;  // 비디오 선택됨
             updateTapes();
-            applyBlinkEffect(downArrow);
         }
     });
 
-    // 위 방향키 클릭 시 비디오 선택 해제
-    document.querySelector(".up-arrow").addEventListener("click", function () {
-        if (isVideoSelected) {
-            isVideoSelected = false;  // 비디오 선택 해제
-            updateTapes();
-            applyBlinkEffect(upArrow);
-        }
-    });
+// 위 방향키 클릭 시 비디오 선택 해제
+document.querySelector(".up-arrow").addEventListener("click", function () {
+    if (isVideoSelected) {
+        stopMedia();  // 추가된 정지 함수
+        isVideoSelected = false;
+        updateTapes();
+    }
+});
 
     // 키보드 방향키 입력 처리
     document.addEventListener("keydown", function (event) {
@@ -78,11 +87,61 @@ document.addEventListener("DOMContentLoaded", function () {
                 const activeTape = document.querySelector(".video-tape.active");
                 if (activeTape) {
                     activeTape.classList.remove("enlarged");
+                    stopMedia(); 
                     console.log(`비디오 선택 해제 : ${activeTape.dataset.title}`);
                 }
                 isVideoSelected = false; // 선택 취소
                 updateTapes();
-                applyBlinkEffect(upArrow);
+            }
+            if (event.key === "ArrowDown"){
+                console.log(`선택 확정 시도`);  // 두 번째 선택 감지 로그
+                const activeTape = document.querySelector(".video-tape.active");
+                if (activeTape) {
+                    console.log("선택된 테이프 존재, 애니메이션 준비 중...");
+                    const allTapes = document.querySelectorAll(".video-tape");
+                    allTapes.forEach(tape => {
+                        if (tape !== activeTape) {
+                            tape.classList.add("fade-out");
+                        }
+                    });
+                    stopMedia();
+                    // 기존 transform 값을 계산
+                    const computedStyle = window.getComputedStyle(activeTape);
+                    const matrix = new DOMMatrix(computedStyle.transform);
+                    const currentTranslateY = matrix.m42; // 현재 Y 이동값
+                    const finalTranslateY = currentTranslateY + 200;
+                    
+                    // 직접 애니메이션 적용 (CSS 클래스 없이)
+                    activeTape.style.transition = "transform 4s ease, opacity 4s ease";
+                    activeTape.style.transform = `translateY(${finalTranslateY}px)`;
+                    activeTape.style.opacity = 0;
+                    // 오디오 볼륨 점점 증가
+                    const audio = document.querySelector("audio"); // 대상 오디오
+                    if (audio) {
+                        audio.volume = 0.5;
+                        audio.play().catch(e => console.warn("오디오 재생 실패:", e));
+                        let volume = 0.5;
+                        const volumeInterval = setInterval(() => {
+                            volume += 0.025;
+                            if (volume >= 1) {
+                                volume = 1;
+                                clearInterval(volumeInterval);
+                            }
+                            audio.volume = volume;
+                        }, 50); // 1초 동안 0 → 1 로 증가 (50ms마다 0.05씩 증가)
+                    }
+                    // 애니메이션 종료 후 페이지 이동
+                    setTimeout(() => {
+                        const linkTag = activeTape.querySelector("p.page-link");
+                        if (linkTag && linkTag.textContent.trim() !== "") {
+                            const nextPage = linkTag.textContent.trim();
+                            console.log(`페이지 이동: ${nextPage}`);
+                            window.location.href = nextPage;
+                        } else {
+                            console.warn("다음 페이지 링크가 존재하지 않음");
+                        }
+                    }, 1000); // transition과 동일한 시간
+                }
             }
             return;  // 선택된 상태에서는 다른 방향키 무시
         }
@@ -91,20 +150,22 @@ document.addEventListener("DOMContentLoaded", function () {
         if (event.key === "ArrowRight" && currentIndex < tapes.length - 1) {
             currentIndex++;
             updateTapes();
-            applyBlinkEffect(rightArrow);
         } else if (event.key === "ArrowLeft" && currentIndex > 0) {
             currentIndex--;
             updateTapes();
-            applyBlinkEffect(leftArrow);
         }
 
+
         // 아래 방향키 처리
-        if (event.key === "ArrowDown" && !isVideoSelected) {
-            isVideoSelected = true;  // 비디오 선택됨
-            console.log(`비디오 선택 !`);
-            updateTapes();
-            applyBlinkEffect(downArrow);
-        }
+if (event.key === "ArrowDown") {
+    if (!isVideoSelected) {
+        isVideoSelected = true;
+        console.log(`비디오 선택 !`);
+        updateTapes();
+    } else {
+        
+    }
+}
     });
     // 방향키 눌렀을 때 색을 변화시킴
     document.addEventListener("keydown", function (event) {
@@ -138,3 +199,19 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+
+function stopMedia() {
+    const activeTape = document.querySelector(".video-tape.active");
+    if (activeTape) {
+        const video = activeTape.querySelector("video");
+        const audio = activeTape.querySelector("audio");
+        if (video) {
+            video.pause();
+            video.currentTime = 0;
+        }
+        if (audio) {
+            audio.pause();
+            audio.currentTime = 0;
+        }
+    }
+}

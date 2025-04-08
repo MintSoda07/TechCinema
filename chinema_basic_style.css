@@ -48,7 +48,7 @@ body {
     left:170px;
     display: flex;
     justify-content: left;
-    width: 100%;
+    width: 50%;
 }
 
 .arrow-button {
@@ -76,7 +76,7 @@ body {
     left:220px;
     display: flex;
     justify-content: left;
-    width: 100%;
+    width: 50%;
     transition: background-color 0.3s ease;
 }
 
@@ -155,4 +155,26 @@ body {
 
 .empty_space{
     width: 900px;
+}
+
+/* video와 audio 요소가 부모의 너비를 따르도록 설정 */
+.video-side video,
+.video-side audio {
+    width: 100%;   /* 부모 너비를 100% 따라감 */
+    height: auto;  /* 높이는 비율에 맞게 자동 조정 */
+    max-height: 300px; /* 너무 커지지 않도록 제한 (선택사항) */
+    display: block;
+    margin: 10px auto;
+}
+@keyframes fadeOutSoft {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+.fade-out {
+    animation: fadeOutSoft 0.6s ease forwards;
 }
