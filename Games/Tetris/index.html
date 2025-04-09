@@ -7,18 +7,41 @@
 </head>
 <body>
   <div id="start-screen">
-    <h1>테트리스</h1>
+    <h1>🎮 테트리스</h1>
+    <div id="countdown"></div>
     <button id="start-button">게임 시작</button>
-    <div id="high-score">최고 점수: 0</div>
+    <div id="leaderboard">
+      <h2>🏆 순위표</h2>
+      <ul id="leaderboard-list"></ul>
+    </div>
   </div>
+
   <div id="game-container" style="display: none;">
     <canvas id="tetris" width="240" height="400"></canvas>
     <div id="sidebar">
       <div id="score">점수: 0</div>
-      <div id="next">다음 블록:</div>
-      <canvas id="next-piece" width="80" height="80"></canvas>
+      <div id="time">시간: 00:00</div>
+
+      <div id="next">
+        <h3>다음 블록:</h3>
+        <canvas id="next-piece" width="80" height="80"></canvas>
+      </div>
+
+      <div id="controls">
+        <h3>조작 방법</h3>
+        <p>←: 왼쪽 이동</p>
+        <p>→: 오른쪽 이동</p>
+        <p>↓: 빠르게 내리기</p>
+        <p>Shift: 블록 회전</p>
+      </div>
+
+      <div id="leaderboard-panel">
+        <h3>🏆 순위표</h3>
+        <ul id="leaderboard-list-game"></ul>
+      </div>
     </div>
   </div>
+
   <script src="script.js"></script>
 </body>
 </html>
