@@ -1,0 +1,32 @@
+body {
+    background: #111;
+    color: #fff;
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+  
+  #start-screen {
+    text-align: center;
+  }
+  
+  #start-button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  
+  #game-container {
+    display: flex;
+    gap: 20px;
+  }
+  
+  #sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
