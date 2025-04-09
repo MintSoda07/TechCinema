@@ -27,34 +27,34 @@
         </div>
     </header>
 
-    <!-- 플레이어 상태 메뉴 (왼쪽) -->
-    <aside class="player-panel collapsed" id="playerPanel">
-        <div class="tab-preview" onclick="togglePanel()">🧙‍♂️</div>
-        <div class="panel-content">
-            <div class="player-info">
-                <img src="player.png" alt="플레이어" class="player-sprite" />
-                <h3>에르디아</h3>
-                <p>레벨 3 | 경험치 120/300</p>
-                <p>HP: 230 / 300</p>
-                <p>MP: 80 / 120</p>
-                <p>기력: 60 / 100</p>
-                <p>허기: 72%</p>
-                <p>수분: 84%</p>
-            </div>
-            <nav class="player-tabs">
-                <button onclick="showTab('status')">상태</button>
-                <button onclick="showTab('skills')">스킬</button>
-                <button onclick="showTab('equipment')">장비</button>
-                <button onclick="showTab('effects')">효과</button>
-                <button onclick="showTab('codex')">도감</button>
-            </nav>
-            <div class="tab-content" id="tabContent">
-                <!-- 기본 상태 표시 -->
-                <p>상태 정보 표시 영역</p>
-            </div>
-        </div>
-    </aside>
+    <!-- 왼쪽 고정 메뉴 버튼 (☰) -->
+    <div id="menuButton" onclick="togglePanel()">☰</div>
 
+<!-- 플레이어 상태 메뉴 (왼쪽) -->
+<aside class="player-panel" id="playerPanel">
+    <div class="panel-content">
+        <div class="player-info">
+            <img src="player.png" alt="플레이어" class="player-sprite" />
+            <h3>에르디아</h3>
+            <p>레벨 3 | 경험치 120/300</p>
+            <p>HP: 230 / 300</p>
+            <p>MP: 80 / 120</p>
+            <p>기력: 60 / 100</p>
+            <p>허기: 72%</p>
+            <p>수분: 84%</p>
+        </div>
+        <nav class="player-tabs">
+            <button onclick="showTab('status')">상태</button>
+            <button onclick="showTab('skills')">스킬</button>
+            <button onclick="showTab('equipment')">장비</button>
+            <button onclick="showTab('effects')">효과</button>
+            <button onclick="showTab('codex')">도감</button>
+        </nav>
+        <div class="tab-content" id="tabContent">
+            <p>상태 정보 표시 영역</p>
+        </div>
+    </div>
+</aside>
     <!-- 중앙 전투/이벤트 영역 -->
     <main class="main-stage">
         <div class="event-display">
@@ -65,20 +65,8 @@
     <!-- 하단 카드 덱 -->
     <footer class="card-deck">
         <div class="discard-area">🗑️ 버리기</div>
-        <div class="hand-cards">
-            <!-- 카드들 들어갈 자리 -->
-            <div class="card">
-                <img src="fireball.png" alt="파이어볼" class="card-image" />
-                <div class="card-name">파이어볼</div>
-                <div class="card-effect">🔥 마법 공격</div>
-                <div class="card-description">적 하나에게 30의 화염 피해를 줍니다.</div>
-            </div>
-            <div class="card">
-                <img src="guard.png" alt="가드업" class="card-image" />
-                <div class="card-name">가드업</div>
-                <div class="card-effect">🛡️ 방어 강화</div>
-                <div class="card-description">1턴 동안 받는 피해를 50% 감소시킵니다.</div>
-            </div>
+        <div class="hand-cards" id="handCards">
+            <!--카드들 들어올 공간-->
         </div>
         <div class="deck-button">📚 덱</div>
     </footer>
