@@ -8,50 +8,55 @@ nextContext.scale(20, 20);
 
 const startScreen = document.getElementById('start-screen');
 const startButton = document.getElementById('start-button');
-const highScoreElement = document.getElementById('high-score');
 const gameContainer = document.getElementById('game-container');
 const scoreElement = document.getElementById('score');
+const leaderboardStart = document.getElementById('leaderboard-list');
+const leaderboardGame = document.getElementById('leaderboard-list-game');
 
-let highScore = localStorage.getItem('highScore') || 0;
 let score = 0;
+let gameStartTime = 0;
+let elapsedTime = 0;
 
 const colors = [
   null, '#FF0D72', '#0DC2FF', '#0DFF72',
   '#F538FF', '#FF8E0D', '#FFE138', '#3877FF',
+  '#888888', '#00FF00', '#FF00FF', '#222222' // 11번: Blocker (공백처럼 보이도록)
 ];
 
-const arena = createMatrix(12, 20);
-
-const player = {
-  pos: { x: 0, y: 0 },
-  matrix: null,
-  next: null,
-};
-
 function createMatrix(w, h) {
-  const matrix = [];
-  while (h--) matrix.push(new Array(w).fill(0));
-  return matrix;
+  return Array.from({ length: h }, () => new Array(w).fill(0));
 }
 
 function createPiece(type) {
   switch (type) {
-    case 'T': return [[0, 1, 0], [1, 1, 1], [0, 0, 0]];
+    case 'T': return [[0, 1, 0], [1, 1, 1]];
     case 'O': return [[2, 2], [2, 2]];
-    case 'L': return [[0, 0, 3], [3, 3, 3], [0, 0, 0]];
-    case 'J': return [[4, 0, 0], [4, 4, 4], [0, 0, 0]];
-    case 'I': return [[0, 5, 0, 0], [0, 5, 0, 0], [0, 5, 0, 0], [0, 5, 0, 0]];
-    case 'S': return [[0, 6, 6], [6, 6, 0], [0, 0, 0]];
-    case 'Z': return [[7, 7, 0], [0, 7, 7], [0, 0, 0]];
+    case 'L': return [[0, 0, 3], [3, 3, 3]];
+    case 'J': return [[4, 0, 0], [4, 4, 4]];
+    case 'I': return [[5], [5], [5], [5]];
+    case 'S': return [[0, 6, 6], [6, 6, 0]];
+    case 'Z': return [[7, 7, 0], [0, 7, 7]];
+    case 'FAST': return [[8], [8], [8], [8]];
+    case 'BIG': return [
+      [9, 9, 9],
+      [9, 9, 9],
+      [9, 9, 9]
+    ];
+    case 'Blocker': return [[11]];
   }
 }
 
 function drawMatrix(matrix, offset, ctx = context) {
   matrix.forEach((row, y) => {
     row.forEach((value, x) => {
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+      ctx.lineWidth = 0.05;
+      ctx.strokeRect(x + offset.x, y + offset.y, 1, 1);
       if (value !== 0) {
         ctx.fillStyle = colors[value];
         ctx.fillRect(x + offset.x, y + offset.y, 1, 1);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+        ctx.strokeRect(x + offset.x, y + offset.y, 1, 1);
       }
     });
   });
@@ -85,9 +90,7 @@ function collide(arena, player) {
   const o = player.pos;
   for (let y = 0; y < m.length; ++y) {
     for (let x = 0; x < m[y].length; ++x) {
-      if (m[y][x] !== 0 &&
-          (arena[y + o.y] &&
-           arena[y + o.y][x + o.x]) !== 0) {
+      if (m[y][x] !== 0 && (arena[y + o.y] && arena[y + o.y][x + o.x]) !== 0) {
         return true;
       }
     }
@@ -96,23 +99,26 @@ function collide(arena, player) {
 }
 
 function rotate(matrix, dir) {
-  for (let y = 0; y < matrix.length; ++y) {
-    for (let x = 0; x < y; ++x) {
-      [matrix[x][y], matrix[y][x]] = [matrix[y][x], matrix[x][y]];
-    }
-  }
-  dir > 0 ? matrix.forEach(row => row.reverse()) : matrix.reverse();
+  const result = matrix[0].map((_, i) =>
+    matrix.map(row => row[i])
+  );
+  return dir > 0 ? result.map(row => row.reverse()) : result.reverse();
 }
 
 function playerRotate(dir) {
+  if (player.gimmick) return;
+  const originalMatrix = player.matrix;
+  const rotated = rotate(player.matrix, dir);
+
   const pos = player.pos.x;
   let offset = 1;
-  rotate(player.matrix, dir);
+  player.matrix = rotated;
+
   while (collide(arena, player)) {
     player.pos.x += offset;
     offset = -(offset + (offset > 0 ? 1 : -1));
-    if (offset > player.matrix[0].length) {
-      rotate(player.matrix, -dir);
+    if (offset > rotated[0].length) {
+      player.matrix = originalMatrix;
       player.pos.x = pos;
       return;
     }
@@ -132,7 +138,27 @@ function playerDrop() {
 
 function playerMove(dir) {
   player.pos.x += dir;
-  if (collide(arena, player)) player.pos.x -= dir;
+  if (collide(arena, player)) {
+    player.pos.x -= dir;
+  }
+}
+
+function randomPieceType() {
+  const base = 'TJLOSZI';
+  let chance = Math.random();
+  if (score >= 5000 && chance < 0.1) return 'Blocker';
+  if (score >= 3000 && chance < 0.1) return 'BIG';
+  if (score >= 1000 && chance < 0.1) return 'FAST';
+  return base[Math.floor(Math.random() * base.length)];
+}
+
+function getPieceType(matrix) {
+  const flat = matrix.flat();
+  const type = flat.find(v => v !== 0);
+  if (type === 8) return 'FAST';
+  if (type === 9) return 'BIG';
+  if (type === 11) return 'Blocker';
+  return '';
 }
 
 function playerReset() {
@@ -141,74 +167,73 @@ function playerReset() {
   player.next = createPiece(randomPieceType());
   player.pos.y = 0;
   player.pos.x = Math.floor((arena[0].length - player.matrix[0].length) / 2);
+
+  const pieceType = getPieceType(player.matrix);
+  player.gimmick = (pieceType === 'FAST');
+  dropInterval = (pieceType === 'FAST') ? 100 : 1000;
+
   if (collide(arena, player)) {
     arena.forEach(row => row.fill(0));
-    score = 0;
-    updateScore();
     gameOver();
   }
+
   drawNext();
 }
 
-function randomPieceType() {
-  const pieces = 'TJLOSZI';
-  return pieces[Math.floor(Math.random() * pieces.length)];
+function shuffleArena() {
+  const allBlocks = arena.flat().filter(v => v !== 0);
+  allBlocks.sort(() => Math.random() - 0.5);
+  let i = 0;
+  for (let y = 0; y < arena.length; y++) {
+    for (let x = 0; x < arena[y].length; x++) {
+      arena[y][x] = allBlocks.length ? allBlocks[i++] || 0 : 0;
+    }
+  }
 }
 
 function arenaSweep() {
-    outer: for (let y = arena.length - 1; y >= 0; --y) {
-      for (let x = 0; x < arena[y].length; ++x) {
-        if (arena[y][x] === 0) {
-          continue outer;
-        }
-      }
-      const row = arena.splice(y, 1)[0].fill(0);
-      arena.unshift(row);
-      ++y;
-      score += 10;
+  outer: for (let y = arena.length - 1; y >= 0; --y) {
+    for (let x = 0; x < arena[y].length; ++x) {
+      if (arena[y][x] === 0 || arena[y][x] === 11) continue outer;
     }
-    updateScore(); // 점수 반영!
+    const row = arena.splice(y, 1)[0].fill(0);
+    arena.unshift(row);
+    ++y;
+    score += 1000;
   }
+  updateScore();
+}
 
 function updateScore() {
-  scoreElement.innerText = `점수: ${score}`;
-  if (score > highScore) {
-    highScore = score;
-    localStorage.setItem('highScore', highScore);
-    highScoreElement.innerText = `최고 점수: ${highScore}`;
-  }
-}
-
-let dropCounter = 0;
-let dropInterval = 1000;
-let lastTime = 0;
-
-function update(time = 0) {
-  const deltaTime = time - lastTime;
-  lastTime = time;
-  dropCounter += deltaTime;
-  if (dropCounter > dropInterval) {
-    playerDrop();
-  }
-  draw();
-  requestAnimationFrame(update);
-}
-
-function flashScreen(callback) {
-  let flashes = 0;
-  const interval = setInterval(() => {
-    canvas.style.visibility = (canvas.style.visibility === 'hidden') ? 'visible' : 'hidden';
-    flashes++;
-    if (flashes > 6) {
-      clearInterval(interval);
-      canvas.style.visibility = 'visible';
-      callback();
-    }
-  }, 100);
+  elapsedTime = Math.floor((performance.now() - gameStartTime) / 1000);
+  const minutes = String(Math.floor(elapsedTime / 60)).padStart(2, '0');
+  const seconds = String(elapsedTime % 60).padStart(2, '0');
+  scoreElement.innerText = `점수: ${score} | 시간: ${minutes}:${seconds}`;
 }
 
 function gameOver() {
-  flashScreen(resetGame);
+  const playerName = prompt('게임 오버! 이름을 입력하세요:');
+  if (playerName) {
+    const leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
+    leaderboard.push({ name: playerName, score: score });
+    leaderboard.sort((a, b) => b.score - a.score);
+    localStorage.setItem('leaderboard', JSON.stringify(leaderboard.slice(0, 5)));
+    updateLeaderboard();
+  }
+  resetGame();
+}
+
+function updateLeaderboard() {
+  const leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
+  [leaderboardStart, leaderboardGame].forEach(container => {
+    if (!container) return;
+    container.innerHTML = '';
+    leaderboard.forEach((entry, index) => {
+      const li = document.createElement('li');
+      li.textContent = `${index + 1}. ${entry.name}: ${entry.score}점`;
+      container.appendChild(li);
+    });
+  });
 }
 
 function resetGame() {
@@ -221,22 +246,75 @@ function resetGame() {
 
 function startGame() {
   arena.forEach(row => row.fill(0));
+  gameStartTime = performance.now();
   playerReset();
   updateScore();
   update();
 }
 
+const arena = createMatrix(12, 20);
+const player = {
+  pos: { x: 0, y: 0 },
+  matrix: null,
+  next: null,
+  gimmick: false,
+};
+
+let dropCounter = 0;
+let dropInterval = 1000;
+let lastTime = 0;
+
+function update(time = 0) {
+  const deltaTime = time - lastTime;
+  lastTime = time;
+  dropCounter += deltaTime;
+  if (dropCounter > dropInterval) {
+    playerDrop();
+  }
+  updateScore();
+  draw();
+  requestAnimationFrame(update);
+}
+
+function countdown(callback) {
+  const countdownElem = document.createElement('div');
+  countdownElem.style.position = 'absolute';
+  countdownElem.style.top = '50%';
+  countdownElem.style.left = '50%';
+  countdownElem.style.transform = 'translate(-50%, -50%)';
+  countdownElem.style.fontSize = '4rem';
+  countdownElem.style.color = '#fff';
+  countdownElem.style.zIndex = '10';
+  document.body.appendChild(countdownElem);
+
+  let count = 3;
+  const interval = setInterval(() => {
+    countdownElem.textContent = count;
+    count--;
+    if (count < 0) {
+      clearInterval(interval);
+      document.body.removeChild(countdownElem);
+      callback();
+    }
+  }, 1000);
+}
+
 startButton.addEventListener('click', () => {
-  startScreen.style.display = 'none';
-  gameContainer.style.display = 'flex';
-  startGame();
+  startScreen.classList.add('fade-out');
+  setTimeout(() => {
+    startScreen.style.display = 'none';
+    gameContainer.style.display = 'flex';
+    countdown(() => {
+      startGame();
+    });
+  }, 500);
 });
 
 document.addEventListener('keydown', event => {
-  if (event.key === 'ArrowLeft') playerMove(-1);
-  else if (event.key === 'ArrowRight') playerMove(1);
-  else if (event.key === 'ArrowDown') playerDrop();
-  else if (event.key === 'Shift') playerRotate(1); // Shift 회전
+  if (event.code === 'ArrowLeft') playerMove(-1);
+  else if (event.code === 'ArrowRight') playerMove(1);
+  else if (event.code === 'ArrowDown') playerDrop();
+  else if (event.code === 'ShiftLeft' || event.code === 'ShiftRight') playerRotate(1);
 });
 
-highScoreElement.innerText = `최고 점수: ${highScore}`;
+updateLeaderboard();
