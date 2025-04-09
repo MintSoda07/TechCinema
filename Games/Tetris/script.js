@@ -199,7 +199,7 @@ function arenaSweep() {
     const row = arena.splice(y, 1)[0].fill(0);
     arena.unshift(row);
     ++y;
-    score += 1000;
+    score += 70;
   }
   updateScore();
 }
