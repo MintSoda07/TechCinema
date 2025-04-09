@@ -188,7 +188,8 @@ function generateMineBoard(rows, cols, mines) {
     const mineTable = document.getElementById('mineTable');
     mineTable.innerHTML = ''; // 기존 보드 초기화
     revealedCount = 0; // 새 게임 시작 시 초기화
-
+    flagCount = 0; // 깃발 개수도 초기화
+    updateFlagUI();
     const board = [];
     const minePositions = new Set();
 
@@ -214,23 +215,23 @@ function generateMineBoard(rows, cols, mines) {
     });
 
     // 인접 지뢰 수 계산
-const dir = [-1, 0, 1];
-for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-        if (board[r][c].isMine) continue;
-        let count = 0;
-        dir.forEach(dr => {
-            dir.forEach(dc => {
-                const nr = r + dr;
-                const nc = c + dc;
-                if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && board[nr][nc].isMine) {
-                    count++;
-                }
+    const dir = [-1, 0, 1];
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+            if (board[r][c].isMine) continue;
+            let count = 0;
+            dir.forEach(dr => {
+                dir.forEach(dc => {
+                    const nr = r + dr;
+                    const nc = c + dc;
+                    if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && board[nr][nc].isMine) {
+                        count++;
+                    }
+                });
             });
-        });
-        board[r][c].adjacent = count;
+            board[r][c].adjacent = count;
+        }
     }
-}
 
     // HTML 테이블로 표시
     const table = document.createElement('table');
@@ -271,6 +272,8 @@ function revealCell(r, c, board, td) {
     } else {
         if (cell.adjacent > 0) {
             td.innerText = cell.adjacent;
+            td.classList.add('smoke');
+            setTimeout(() => td.classList.remove('smoke'), 500);
         } else {
             const dir = [-1, 0, 1];
             dir.forEach(dr => {
@@ -297,7 +300,10 @@ function revealCell(r, c, board, td) {
             clearInterval(timerInterval);
             gameOver = true;
             showResetOnlyUI();
-            alert('승리! 모든 지뢰를 피해 성공적으로 클리어했습니다!');
+            // 남은 지뢰에 자동 깃발
+            autoFlagRemainingMines(board);
+            const score = calculateScore(selectedDifficulty.label, selectedDifficulty.mines);
+            showVictoryModal(score, selectedDifficulty.label);  // 또는 현재 난이도 변수
         }
     }
 }
@@ -310,7 +316,7 @@ function revealAllMines(board) {
                 const td = document.querySelector(`td[data-row="${r}"][data-col="${c}"]`);
                 if (!td.classList.contains('revealed')) {
                     td.innerText = '💣';
-                    td.style.backgroundColor = '#faa';
+                    td.style.backgroundColor = '#fff';
                 }
             }
         });
@@ -360,7 +366,18 @@ function handleCellClick(r, c, board, td) {
 
     if (mode === 'flag') {
         if (!cell.revealed) {
-            td.innerText = td.innerText === '🚩' ? '' : '🚩';
+            if (td.innerText === '🚩') {
+                td.innerText = '';
+                flagCount--;
+                td.classList.remove('flagged');
+            } else {
+                td.innerText = '🚩';
+                flagCount++;
+                td.classList.add('flagged');
+                td.classList.add('flag-anim');
+                setTimeout(() => td.classList.remove('flag-anim'), 500);
+            }
+            updateFlagUI(); // 여기 추가
         }
     } else if (mode === 'find') {
         tryFindSurrounding(r, c, board);
@@ -405,8 +422,15 @@ let flagCount = 0;
 
 function updateFlagUI() {
     const remaining = selectedDifficulty.mines - flagCount;
-    document.getElementById('flagCounter').innerText = `남은 지뢰 수: ${remaining}`;
+    const flagCounter = document.getElementById('flagCounter');
+    flagCounter.innerText = `남은 지뢰 수: ${remaining}`;
+
+    // 애니메이션 적용
+    flagCounter.classList.remove('pop');
+    void flagCounter.offsetWidth; // 재적용 트릭
+    flagCounter.classList.add('pop');
 }
+
 document.addEventListener('contextmenu', (e) => {
     if (e.target.matches('.cell')) {
         e.preventDefault();
@@ -428,3 +452,76 @@ document.addEventListener('contextmenu', (e) => {
         updateFlagUI();
     }
 });
+function autoFlagRemainingMines(board) {
+    board.forEach((row, r) => {
+        row.forEach((cell, c) => {
+            if (cell.isMine) {
+                const td = document.querySelector(`td[data-row="${r}"][data-col="${c}"]`);
+                if (td.innerText !== '🚩') {
+                    td.innerText = '🚩';
+                    td.classList.add('flagged');
+                    td.classList.add('flag-anim');
+                    setTimeout(() => td.classList.remove('flag-anim'), 500);
+                    flagCount++;
+                }
+            }
+        });
+    });
+    updateFlagUI();
+}
+function calculateScore(label, mines) {
+    // 현재 경과 시간 가져오기
+    const timerEl = document.getElementById('gameTimer').innerText;
+    const [h, m, s] = timerEl.split(':').map(Number);
+    const elapsedSeconds = h * 3600 + m * 60 + s;
+
+    const baseScore = 1000;
+    let difficultyFactor = 0;
+
+    switch (label) {
+        case '쉬움':
+            difficultyFactor = 5;
+            break;
+        case '보통':
+            difficultyFactor = 10;
+            break;
+        case '어려움':
+            difficultyFactor = 25;
+            break;
+        case '도전적':
+            difficultyFactor = 40;
+            break;
+        case '전문가':
+            difficultyFactor = 55;
+            break;
+        case '극한':
+            difficultyFactor = 75;
+            break;
+        default:
+            difficultyFactor = Math.floor((mines / (rows * cols)) * 100 + Math.sqrt(rows * cols) / 2);
+    }
+
+    const score = baseScore + (difficultyFactor * mines) - elapsedSeconds;
+    return Math.max(0, score); // 최소 0점 보장
+}
+function showVictoryModal(score, difficultyLabel) {
+    const modal = document.getElementById('victoryModal');
+    const scoreElem = document.getElementById('victory-score');
+    const difficultyElem = document.getElementById('victory-difficulty');
+
+    scoreElem.textContent = `점수: ${score}점`;
+    difficultyElem.textContent = `난이도: ${difficultyLabel}`;
+
+    modal.classList.add('show');
+}
+function restartGame() {
+    location.reload();  // 새로고침
+}
+
+function showRanking() {
+    alert("🏆 순위표 기능은 추후 추가될 예정입니다.");  // 또는 모달 등으로 연결
+}
+
+function exitGame() {
+    window.location.href = "../index.html";  // 또는 메뉴 페이지
+}
