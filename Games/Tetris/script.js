@@ -147,8 +147,8 @@ function randomPieceType() {
   const base = 'TJLOSZI';
   let chance = Math.random();
   if (score >= 5000 && chance < 0.1) return 'Blocker';
-  if (score >= 3000 && chance < 0.1) return 'BIG';
-  if (score >= 1000 && chance < 0.1) return 'FAST';
+  if (score >= 3000 && chance < 0.2) return 'BIG';
+  if (score >= 1000 && chance < 0.4) return 'FAST';
   return base[Math.floor(Math.random() * base.length)];
 }
 
