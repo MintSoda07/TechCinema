@@ -22,12 +22,18 @@
     <div id="newGameSection" class="hidden-section">
         <h2>난이도 선택</h2>
         <div class="difficulty-options">
-            <button class="difficulty-button" onclick="showPreview('쉬움', 10, 10, 10)">쉬움</button>
-            <button class="difficulty-button" onclick="showPreview('보통', 16, 16, 40)">보통</button>
-            <button class="difficulty-button" onclick="showPreview('어려움', 16, 30, 99)">어려움</button>
-            <button class="difficulty-button" onclick="showPreview('도전적', 20, 30, 120)">도전적</button>
-            <button class="difficulty-button" onclick="showPreview('전문가', 24, 30, 180)">전문가</button>
-            <button class="difficulty-button" onclick="showPreview('극한', 30, 40, 250)">극한</button>
+            <button class="difficulty-button"
+                onclick="showPreview('쉬움', 10, 10, 10); setSelectedDifficulty('쉬움', 10, 10, 10)">쉬움</button>
+            <button class="difficulty-button"
+                onclick="showPreview('보통', 16, 16, 40); setSelectedDifficulty('보통', 16, 16, 40)">보통</button>
+            <button class="difficulty-button"
+                onclick="showPreview('어려움', 16, 30, 99); setSelectedDifficulty('어려움', 16, 30, 99)">어려움</button>
+            <button class="difficulty-button"
+                onclick="showPreview('도전적', 20, 30, 120); setSelectedDifficulty('도전적', 20, 30, 120)">도전적</button>
+            <button class="difficulty-button"
+                onclick="showPreview('전문가', 24, 30, 180); setSelectedDifficulty('전문가', 24, 30, 180)">전문가</button>
+            <button class="difficulty-button"
+                onclick="showPreview('극한', 30, 40, 250); setSelectedDifficulty('극한', 30, 40, 250)">극한</button>
             <button class="difficulty-button" onclick="toggleSection('customSettings')">🛠️ 커스텀</button>
         </div>
 
@@ -63,33 +69,37 @@
     <!-- 게임 관리자 섹션 -->
     <div id="gameManagerSection" class="hidden-section" style="display:none;">
         <div id="gameStartCountdown" class="countdown"></div>
-    
+
         <div id="gameUI" style="display:none;">
             <!-- 상단 UI -->
             <div class="game-header">
-                <button onclick="returnToMain()" class="return-button">← 돌아가기</button>
+                <button onclick="returnToMain()" class="action-button">돌아가기</button>
                 <div class="game-title" id="difficultyLabel">지뢰찾기 - 쉬움</div>
                 <div class="timer" id="gameTimer">00:00:00</div>
             </div>
-    
+
             <!-- 지뢰 테이블 자리 -->
+            <div id="flagCounter">남은 지뢰 수: 10</div>
+
             <div id="mineTable">
                 <!-- 여기에 실제 게임 보드가 들어감 -->
-                <p>🔲 지뢰 게임 보드 자리 🔲</p>
+                <p>지뢰찾기 시작!</p>
             </div>
-    
+
             <!-- 조작 버튼 -->
             <div class="control-buttons">
-                <button>🔍 찾기</button>
-                <button>🚩 깃발</button>
-                <button>항복</button>
-                <button onclick="resetGame()">초기화</button>
+                <button class="action-button" id="btnFind" onclick="setFindMode()">🔍 찾기</button>
+                <button class="action-button" id="btnFlag" onclick="setFlagMode()">🚩 깃발</button>
+                <button class="action-button" id="btnSurrender">항복</button>
+                <button class="action-button" onclick="resetGame()" id="btnReset" style="display: none;">초기화</button>
             </div>
+            <!-- 게임 효과를 위한 오버레이 -->
+            <div id="gameEffect" class="effect-overlay"></div>
+            <audio id="sndBoom" src="boom.mp3" preload="auto"></audio>
+            <audio id="sndWin" src="win.mp3" preload="auto"></audio>
         </div>
     </div>
     <script src="minesweeper.js"></script>
 </body>
-
-</html>
 
 </html>
