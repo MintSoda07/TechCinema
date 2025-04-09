@@ -86,6 +86,20 @@
                 <p>지뢰찾기 시작!</p>
             </div>
 
+            <div id="victoryModal" class="modal hidden">
+                <div class="modal-content">
+                    <h2>승리!</h2>
+                    <p>모든 지뢰를 찾아냈습니다.</p>
+                    <p id="victory-difficulty">난이도: </p>
+                    <p id="victory-score">점수: </p>
+                    <div class="modal-buttons">
+                        <button onclick="restartGame()">다시하기</button>
+                        <button onclick="showRanking()">순위표</button>
+                        <button onclick="exitGame()">나가기</button>
+                    </div>
+                </div>
+            </div>
+
             <!-- 조작 버튼 -->
             <div class="control-buttons">
                 <button class="action-button" id="btnFind" onclick="setFindMode()">🔍 찾기</button>
