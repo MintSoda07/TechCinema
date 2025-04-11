@@ -18,9 +18,9 @@
                 <div class="exp-fill" style="width: 40%;"></div>
             </div>
         </div>
-        <div class="floor-info">
-            <div class="floor-number">17F</div>
-            <div class="floor-name">망령의 계단</div>
+        <div class="place-info">
+            <div class="place-name">17F</div>
+            <div class="place-detail">망령의 계단</div>
         </div>
         <div class="right-info">
             <div class="gold">💰 432G</div>
@@ -47,7 +47,7 @@
             <button onclick="showTab('status')">상태</button>
             <button onclick="showTab('skills')">스킬</button>
             <button onclick="showTab('equipment')">장비</button>
-            <button onclick="showTab('effects')">효과</button>
+            <button onclick="showTab('quest')">퀘스트</button>
             <button onclick="showTab('codex')">도감</button>
         </nav>
         <div class="tab-content" id="tabContent">
@@ -66,14 +66,21 @@
     <footer class="card-deck">
         <div class="discard-area">🗑️ 버리기</div>
         <div class="deck-button">📚 덱</div>
+        
     </footer>
 
     <!-- 우측 턴 & 날씨 바 -->
     <aside class="side-info">
-        <div class="weather">🌩️ 폭풍우</div>
-        <div class="turn-info">턴: 플레이어</div>
+        <div class="top-info">
+            <div class="day-count">📅 1일차</div>
+            <div class="time-now">🕒 오전 10:32</div>
+            <div class="time-period">🌅 아침</div>
+            <div class="weather">🌩️ 폭풍우</div>
+            <div class="turn-info">턴: 플레이어</div>
+        </div>
+    
+        <div class="end-turn-button">⏭️ 턴 넘기기</div>
     </aside>
-
     <script src="tod.js"></script>
 </body>
 
