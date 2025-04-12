@@ -44,11 +44,11 @@
             <p>수분: 84%</p>
         </div>
         <nav class="player-tabs">
-            <button onclick="showTab('status')">상태</button>
-            <button onclick="showTab('skills')">스킬</button>
-            <button onclick="showTab('equipment')">장비</button>
-            <button onclick="showTab('quest')">퀘스트</button>
-            <button onclick="showTab('codex')">도감</button>
+            <button onclick="showTab('status'); playStatusSound();">상태</button>
+            <button onclick="showTab('skills'); playStatusSound();">스킬</button>
+            <button onclick="showTab('equipment'); playStatusSound();">장비</button>
+            <button onclick="showTab('quest'); playStatusSound();">퀘스트</button>
+            <button onclick="showTab('codex'); playStatusSound();">도감</button>
         </nav>
         <div class="tab-content" id="tabContent">
             <p>상태 정보 표시 영역</p>
@@ -61,11 +61,24 @@
             <p>👹 망령이 등장했습니다!</p>
         </div>
     </main>
+    <div class="hp-ui">
+        <span id="ui-name">HP</span><span id="hpValue">3</span>
+        <div class="hp-bar">
+            <div class="hp-fill"></div>
+        </div>
+    </div>
+    <div class="mana-ui">
+        <span id="ui-name">MP</span><span id="manaValue">3</span>
+        <div class="mp-bar">
+            <div class="mp-fill"></div>
+        </div>
+    </div>
 
+    <div class="card-use-rect cardUseRect"></div>
     <!-- 하단 카드 덱 -->
     <footer class="card-deck">
         <div class="discard-area">🗑️ 버리기</div>
-        <div class="deck-button">📚 덱</div>
+        <div class="deck-button" id="deck">📚 덱</div>
         
     </footer>
 
