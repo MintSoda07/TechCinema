@@ -104,7 +104,6 @@ document.querySelector(".up-arrow").addEventListener("click", function () {
                             tape.classList.add("fade-out");
                         }
                     });
-                    stopMedia();
                     // 기존 transform 값을 계산
                     const computedStyle = window.getComputedStyle(activeTape);
                     const matrix = new DOMMatrix(computedStyle.transform);
@@ -115,21 +114,7 @@ document.querySelector(".up-arrow").addEventListener("click", function () {
                     activeTape.style.transition = "transform 4s ease, opacity 4s ease";
                     activeTape.style.transform = `translateY(${finalTranslateY}px)`;
                     activeTape.style.opacity = 0;
-                    // 오디오 볼륨 점점 증가
-                    const audio = document.querySelector("audio"); // 대상 오디오
-                    if (audio) {
-                        audio.volume = 0.5;
-                        audio.play().catch(e => console.warn("오디오 재생 실패:", e));
-                        let volume = 0.5;
-                        const volumeInterval = setInterval(() => {
-                            volume += 0.025;
-                            if (volume >= 1) {
-                                volume = 1;
-                                clearInterval(volumeInterval);
-                            }
-                            audio.volume = volume;
-                        }, 50); // 1초 동안 0 → 1 로 증가 (50ms마다 0.05씩 증가)
-                    }
+
                     // 애니메이션 종료 후 페이지 이동
                     setTimeout(() => {
                         const linkTag = activeTape.querySelector("p.page-link");
