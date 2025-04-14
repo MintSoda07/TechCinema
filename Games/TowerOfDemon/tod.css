@@ -488,6 +488,10 @@ body {
     background: linear-gradient(135deg, #3a3a8f, #5f5fbf); /* MP 파란색 그라디언트 */
 }
 
+#manaValue,#hpValue{
+    position: fixed;
+}
+
 .stat-block {
     padding: 10px;
     background-color: #5e5e5e;
