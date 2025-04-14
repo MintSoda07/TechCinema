@@ -1,0 +1,34 @@
+{
+    "timePeriods": [
+        {
+            "id": "dawn",
+            "label": "새벽",
+            "startHour": 4,
+            "endHour": 7
+        },
+        {
+            "id": "morning",
+            "label": "아침",
+            "startHour": 7,
+            "endHour": 12
+        },
+        {
+            "id": "noon",
+            "label": "낮",
+            "startHour": 12,
+            "endHour": 17
+        },
+        {
+            "id": "evening",
+            "label": "저녁",
+            "startHour": 17,
+            "endHour": 20
+        },
+        {
+            "id": "night",
+            "label": "밤",
+            "startHour": 20,
+            "endHour": 24
+        }
+    ]
+}

@@ -1,0 +1,32 @@
+{
+    "level": 1,
+    "exp": 0,
+    "expMax": 100,
+    "place": {
+        "region": "에리디아 평원",
+        "area": "에렌투스",
+        "spot": "모험가 길드"
+    },
+    "gold": 0,
+    "playerInfo": {
+        "name": "???",
+        "hp": 100,
+        "hpMax": 100,
+        "mp": 30,
+        "mpMax": 30,
+        "stamina": 50,
+        "staminaMax": 50,
+        "hunger": 100,
+        "thirst": 100
+    },
+    "weather": "☀️ 맑음",
+    "turn": "플레이어",
+    "statPoints": 3,
+    "stats": {
+        "힘": 5,
+        "지능": 5,
+        "민첩": 5,
+        "인내": 5,
+        "행운": 5
+    }
+}

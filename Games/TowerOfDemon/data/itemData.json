@@ -1,0 +1,20 @@
+{
+    "sword001": {
+        "name": "철검",
+        "type": "무기",
+        "effect": "공격력 +10",
+        "durability": 100
+    },
+    "potion001": {
+        "name": "체력 물약",
+        "type": "소모품",
+        "effect": "체력 50 회복",
+        "quantity": 5
+    },
+    "armor001": {
+        "name": "철 갑옷",
+        "type": "방어구",
+        "effect": "방어력 +15",
+        "durability": 50
+    }
+}

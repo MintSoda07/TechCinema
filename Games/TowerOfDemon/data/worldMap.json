@@ -1,0 +1,777 @@
+{
+    "에리디아 평원": {
+        "regionCode": "ERDIA_PLAIN",
+        "weatherForecast": [],
+        "currentWeather": null,
+        "regions": {
+            "에렌투스": {
+                "areaCode": "ERTS_VILLAGE",
+                "spots": [
+                    {
+                        "name": "광장",
+                        "spotCode": "ERTS_PLZ",
+                        "bgm": "calm_meadow.mp3",
+                        "isCampable": false,
+                        "isFishable": false,
+                        "isSafe": true,
+                        "connectedRegions": [
+                            "ERDIA_PLAIN"
+                        ]
+                    },
+                    {
+                        "name": "여관",
+                        "spotCode": "ERTS_INN",
+                        "bgm": "calm_inn.mp3",
+                        "isCampable": true,
+                        "isFishable": false,
+                        "isSafe": true,
+                        "connectedRegions": [
+                            "ERTS_PLZ"
+                        ]
+                    },
+                    {
+                        "name": "시장",
+                        "spotCode": "ERTS_MKT",
+                        "bgm": "market_bgm.mp3",
+                        "isCampable": false,
+                        "isFishable": false,
+                        "isSafe": true,
+                        "connectedRegions": [
+                            "ERTS_PLZ"
+                        ]
+                    },
+                    {
+                        "name": "모험가 길드",
+                        "spotCode": "ERTS_GLD",
+                        "bgm": "guild_bgm.mp3",
+                        "isCampable": false,
+                        "isFishable": false,
+                        "isSafe": true,
+                        "connectedRegions": [
+                            "ERTS_PLZ"
+                        ]
+                    },
+                    {
+                        "name": "상점",
+                        "spotCode": "ERTS_SHOP",
+                        "bgm": "shop_bgm.mp3",
+                        "isCampable": false,
+                        "isFishable": false,
+                        "isSafe": true,
+                        "connectedRegions": [
+                            "ERTS_PLZ"
+                        ]
+                    },
+                    {
+                        "name": "도서관",
+                        "spotCode": "ERTS_LIB",
+                        "bgm": "library_bgm.mp3",
+                        "isCampable": false,
+                        "isFishable": false,
+                        "isSafe": true,
+                        "connectedRegions": [
+                            "ERTS_PLZ"
+                        ]
+                    },
+                    {
+                        "name": "타로 카드 점술",
+                        "spotCode": "ERTS_TAROT",
+                        "bgm": "mysterious_bgm.mp3",
+                        "isCampable": false,
+                        "isFishable": false,
+                        "isSafe": true,
+                        "connectedRegions": [
+                            "ERTS_PLZ"
+                        ]
+                    }
+                ],
+                "monsters": [
+                    "MNC_001",
+                    "MNC_002"
+                ],
+                "events": []
+            },
+            "고대 전초기지": {
+                "areaCode": "ABND_BASE",
+                "spots": [
+                    {
+                        "name": "입구",
+                        "spotCode": "ABND_ENT",
+                        "bgm": "abandoned_entrance.mp3",
+                        "isCampable": false,
+                        "isFishable": false,
+                        "isSafe": false,
+                        "connectedRegions": [
+                            "ERDIA_PLAIN"
+                        ]
+                    },
+                    {
+                        "name": "중앙 격납고",
+                        "spotCode": "ABND_HGR",
+                        "bgm": "abandoned_hangar.mp3",
+                        "isCampable": false,
+                        "isFishable": false,
+                        "isSafe": false,
+                        "connectedRegions": [
+                            "ERDIA_PLAIN"
+                        ]
+                    },
+                    {
+                        "name": "감시탑",
+                        "spotCode": "ABND_TWR",
+                        "bgm": "watchtower_bgm.mp3",
+                        "isCampable": false,
+                        "isFishable": false,
+                        "isSafe": false,
+                        "connectedRegions": [
+                            "ERDIA_PLAIN"
+                        ]
+                    }
+                ],
+                "monsters": [
+                    "MNC_003",
+                    "MNC_004"
+                ],
+                "events": []
+            },
+            "사냥터 입구": {
+                "areaCode": "HUNT_PATH",
+                "spots": [
+                    {
+                        "name": "덩굴지대",
+                        "spotCode": "HUNT_VNY",
+                        "bgm": "vine_jungle.mp3",
+                        "isCampable": true,
+                        "isFishable": false,
+                        "isSafe": false,
+                        "connectedRegions": [
+                            "ERDIA_PLAIN"
+                        ]
+                    },
+                    {
+                        "name": "수풀길",
+                        "spotCode": "HUNT_BSH",
+                        "bgm": "bush_path.mp3",
+                        "isCampable": true,
+                        "isFishable": false,
+                        "isSafe": false,
+                        "connectedRegions": [
+                            "ERDIA_PLAIN"
+                        ]
+                    },
+                    {
+                        "name": "야영지",
+                        "spotCode": "HUNT_CMP",
+                        "bgm": "camp_bgm.mp3",
+                        "isCampable": true,
+                        "isFishable": true,
+                        "isSafe": true,
+                        "connectedRegions": [
+                            "ERDIA_PLAIN"
+                        ]
+                    }
+                ],
+                "monsters": [
+                    "MNC_005",
+                    "MNC_006"
+                ],
+                "events": []
+            }
+        }
+    },
+    "대삼림": {
+        "regionCode": "GRT_FOREST",
+        "weatherForecast": [],
+        "currentWeather": null,
+        "regions": {
+            "고목의 숲": {
+                "areaCode": "OLDS_FOREST",
+                "spots": [
+                    {
+                        "name": "거목 아래",
+                        "spotCode": "OLDS_GRW",
+                        "bgm": "forest_depths.mp3",
+                        "isCampable": true,
+                        "isFishable": false,
+                        "isSafe": false,
+                        "connectedRegions": [
+                            "GRT_FOREST"
+                        ]
+                    },
+                    {
+                        "name": "숲속 연못",
+                        "spotCode": "OLDS_PND",
+                        "bgm": "forest_pond.mp3",
+                        "isCampable": true,
+                        "isFishable": true,
+                        "isSafe": false,
+                        "connectedRegions": [
+                            "GRT_FOREST"
+                        ]
+                    },
+                    {
+                        "name": "숨겨진 길",
+                        "spotCode": "OLDS_HID",
+                        "bgm": "hidden_path.mp3",
+                        "isCampable": false,
+                        "isFishable": false,
+                        "isSafe": false,
+                        "connectedRegions": [
+                            "GRT_FOREST"
+                        ]
+                    },
+                    {
+                        "name": "고대의 땅",
+                        "spotCode": "OLDS_ANCEST",
+                        "bgm": "ancient_forest.mp3",
+                        "isCampable": false,
+                        "isFishable": false,
+                        "isSafe": false,
+                        "connectedRegions": [
+                            "GRT_FOREST"
+                        ]
+                    }
+                ],
+                "monsters": [
+                    "MNC_007",
+                    "MNC_008",
+                    "MNC_023"
+                ],
+                "events": [
+                    "고대 유물 발견",
+                    "수수께끼의 표식"
+                ]
+            },
+            "엘프 성역": {
+                "areaCode": "ELVN_SANCT",
+                "spots": [
+                    {
+                        "name": "입구",
+                        "spotCode": "ELVN_ENT",
+                        "bgm": "elven_sanctuary.mp3",
+                        "isCampable": false,
+                        "isFishable": false,
+                        "isSafe": true,
+                        "connectedRegions": [
+                            "GRT_FOREST"
+                        ]
+                    },
+                    {
+                        "name": "의식의 제단",
+                        "spotCode": "ELVN_ALTAR",
+                        "bgm": "elven_sanctuary.mp3",
+                        "isCampable": false,
+                        "isFishable": false,
+                        "isSafe": true,
+                        "connectedRegions": [
+                            "GRT_FOREST"
+                        ]
+                    },
+                    {
+                        "name": "엘프 정원",
+                        "spotCode": "ELVN_GARD",
+                        "bgm": "elven_garden.mp3",
+                        "isCampable": true,
+                        "isFishable": false,
+                        "isSafe": true,
+                        "connectedRegions": [
+                            "GRT_FOREST"
+                        ]
+                    },
+                    {
+                        "name": "신성한 연못",
+                        "spotCode": "ELVN_PND",
+                        "bgm": "elven_pond.mp3",
+                        "isCampable": true,
+                        "isFishable": true,
+                        "isSafe": true,
+                        "connectedRegions": [
+                            "GRT_FOREST"
+                        ]
+                    }
+                ],
+                "monsters": [
+                    "MNC_024"
+                ],
+                "events": [
+                    "엘프의 축복",
+                    "성스러운 수호자 소환"
+                ]
+            },
+            "맹수의 둥지": {
+                "areaCode": "BEAST_DEN",
+                "spots": [
+                    {
+                        "name": "야수의 동굴",
+                        "spotCode": "BEAST_CAV",
+                        "bgm": "beast_den.mp3",
+                        "isCampable": false,
+                        "isFishable": false,
+                        "isSafe": false,
+                        "connectedRegions": [
+                            "GRT_FOREST"
+                        ]
+                    },
+                    {
+                        "name": "뼈무덤",
+                        "spotCode": "BEAST_BNE",
+                        "bgm": "beast_den.mp3",
+                        "isCampable": false,
+                        "isFishable": false,
+                        "isSafe": false,
+                        "connectedRegions": [
+                            "GRT_FOREST"
+                        ]
+                    },
+                    {
+                        "name": "숨겨진 구역",
+                        "spotCode": "BEAST_HID",
+                        "bgm": "beast_den.mp3",
+                        "isCampable": false,
+                        "isFishable": false,
+                        "isSafe": false,
+                        "connectedRegions": [
+                            "GRT_FOREST"
+                        ]
+                    },
+                    {
+                        "name": "사냥터",
+                        "spotCode": "BEAST_HUNT",
+                        "bgm": "beast_hunt.mp3",
+                        "isCampable": true,
+                        "isFishable": false,
+                        "isSafe": false,
+                        "connectedRegions": [
+                            "GRT_FOREST"
+                        ]
+                    }
+                ],
+                "monsters": [
+                    "MNC_009",
+                    "MNC_010",
+                    "MNC_025"
+                ],
+                "events": [
+                    "야수의 왕 도전",
+                    "숨겨진 보물 찾기"
+                ]
+            }
+        }
+    },
+    "영원의 화산": {
+        "regionCode": "EVR_VOLCANO",
+        "weatherForecast": [],
+        "currentWeather": null,
+        "regions": {
+            "분화구 입구": {
+                "areaCode": "VLCN_CRATER",
+                "spots": [
+                    {
+                        "name": "불의 문",
+                        "spotCode": "VLCN_FIR",
+                        "bgm": "volcano_warning.mp3",
+                        "isCampable": false,
+                        "isFishable": false,
+                        "isSafe": false,
+                        "connectedRegions": [
+                            "EVR_VOLCANO"
+                        ]
+                    },
+                    {
+                        "name": "화산지대 경계",
+                        "spotCode": "VLCN_BORDER",
+                        "bgm": "volcano_warning.mp3",
+                        "isCampable": false,
+                        "isFishable": false,
+                        "isSafe": false,
+                        "connectedRegions": [
+                            "EVR_VOLCANO"
+                        ]
+                    },
+                    {
+                        "name": "감시초소",
+                        "spotCode": "VLCN_OUTPOST",
+                        "bgm": "volcano_warning.mp3",
+                        "isCampable": false,
+                        "isFishable": false,
+                        "isSafe": false,
+                        "connectedRegions": [
+                            "EVR_VOLCANO"
+                        ]
+                    }
+                ],
+                "monsters": [
+                    "MNC_011",
+                    "MNC_012"
+                ],
+                "events": []
+            },
+            "불의 신전": {
+                "areaCode": "FIRE_TEMPLE",
+                "spots": [
+                    {
+                        "name": "신전 앞마당",
+                        "spotCode": "FIRE_TEMPLE_FNT",
+                        "bgm": "fire_temple.mp3",
+                        "isCampable": false,
+                        "isFishable": false,
+                        "isSafe": false,
+                        "connectedRegions": [
+                            "EVR_VOLCANO"
+                        ]
+                    },
+                    {
+                        "name": "불꽃 회랑",
+                        "spotCode": "FIRE_TEMPLE_HLLW",
+                        "bgm": "fire_temple.mp3",
+                        "isCampable": false,
+                        "isFishable": false,
+                        "isSafe": false,
+                        "connectedRegions": [
+                            "EVR_VOLCANO"
+                        ]
+                    },
+                    {
+                        "name": "제단",
+                        "spotCode": "FIRE_TEMPLE_ALTAR",
+                        "bgm": "fire_temple.mp3",
+                        "isCampable": false,
+                        "isFishable": false,
+                        "isSafe": false,
+                        "connectedRegions": [
+                            "EVR_VOLCANO"
+                        ]
+                    }
+                ],
+                "monsters": [
+                    "MNC_013",
+                    "MNC_014"
+                ],
+                "events": []
+            },
+            "용암 터널": {
+                "areaCode": "LAVA_TUNNEL",
+                "spots": [
+                    {
+                        "name": "용암강",
+                        "spotCode": "LAVA_STREAM",
+                        "bgm": "lava_tunnel.mp3",
+                        "isCampable": false,
+                        "isFishable": false,
+                        "isSafe": false,
+                        "connectedRegions": [
+                            "EVR_VOLCANO"
+                        ]
+                    },
+                    {
+                        "name": "돌다리",
+                        "spotCode": "LAVA_BRIDGE",
+                        "bgm": "lava_tunnel.mp3",
+                        "isCampable": false,
+                        "isFishable": false,
+                        "isSafe": false,
+                        "connectedRegions": [
+                            "EVR_VOLCANO"
+                        ]
+                    },
+                    {
+                        "name": "열기 방",
+                        "spotCode": "LAVA_CHAMBER",
+                        "bgm": "lava_tunnel.mp3",
+                        "isCampable": false,
+                        "isFishable": false,
+                        "isSafe": false,
+                        "connectedRegions": [
+                            "EVR_VOLCANO"
+                        ]
+                    }
+                ],
+                "monsters": [
+                    "MNC_015",
+                    "MNC_016"
+                ],
+                "events": []
+            }
+        }
+    },
+    "사막": {
+        "regionCode": "DSRT_DESERT",
+        "weatherForecast": [],
+        "currentWeather": null,
+        "regions": {
+            "모래 언덕": {
+                "areaCode": "DSRT_SANDDUNES",
+                "spots": [
+                    {
+                        "name": "바람 언덕",
+                        "spotCode": "DSRT_WINDHILL",
+                        "bgm": "desert_wind.mp3",
+                        "isCampable": true,
+                        "isFishable": false,
+                        "isSafe": true,
+                        "connectedRegions": [
+                            "DSRT_SANDDUNES",
+                            "RUINS_GATE"
+                        ]
+                    },
+                    {
+                        "name": "낙타 야영지",
+                        "spotCode": "DSRT_CAMELCAMP",
+                        "bgm": "desert_wind.mp3",
+                        "isCampable": true,
+                        "isFishable": false,
+                        "isSafe": true,
+                        "connectedRegions": [
+                            "DSRT_SANDDUNES",
+                            "LOST_OASIS"
+                        ]
+                    },
+                    {
+                        "name": "모래 폭풍 지대",
+                        "spotCode": "DSRT_SANDSTORM",
+                        "bgm": "desert_wind.mp3",
+                        "isCampable": false,
+                        "isFishable": false,
+                        "isSafe": false,
+                        "connectedRegions": [
+                            "DSRT_SANDDUNES"
+                        ]
+                    }
+                ],
+                "monsters": [
+                    "MNC_017",
+                    "MNC_018"
+                ],
+                "events": []
+            },
+            "유적지 입구": {
+                "areaCode": "RUINS_GATE",
+                "spots": [
+                    {
+                        "name": "파손된 문",
+                        "spotCode": "RUINS_BROKENDOOR",
+                        "bgm": "ruins_gate.mp3",
+                        "isCampable": false,
+                        "isFishable": false,
+                        "isSafe": false,
+                        "connectedRegions": [
+                            "DSRT_SANDDUNES"
+                        ]
+                    },
+                    {
+                        "name": "조각상 앞",
+                        "spotCode": "RUINS_STATUE",
+                        "bgm": "ruins_gate.mp3",
+                        "isCampable": false,
+                        "isFishable": false,
+                        "isSafe": false,
+                        "connectedRegions": [
+                            "DSRT_SANDDUNES"
+                        ]
+                    },
+                    {
+                        "name": "폐허",
+                        "spotCode": "RUINS_WRECKAGE",
+                        "bgm": "ruins_gate.mp3",
+                        "isCampable": false,
+                        "isFishable": false,
+                        "isSafe": false,
+                        "connectedRegions": [
+                            "DSRT_SANDDUNES"
+                        ]
+                    }
+                ],
+                "monsters": [
+                    "MNC_019",
+                    "MNC_020"
+                ],
+                "events": []
+            },
+            "잃어버린 오아시스": {
+                "areaCode": "LOST_OASIS",
+                "spots": [
+                    {
+                        "name": "야자수 숲",
+                        "spotCode": "OASIS_PALMTREES",
+                        "bgm": "lost_oasis.mp3",
+                        "isCampable": true,
+                        "isFishable": true,
+                        "isSafe": true,
+                        "connectedRegions": [
+                            "DSRT_SANDDUNES",
+                            "LOST_OASIS"
+                        ]
+                    },
+                    {
+                        "name": "작은 연못",
+                        "spotCode": "OASIS_POND",
+                        "bgm": "lost_oasis.mp3",
+                        "isCampable": true,
+                        "isFishable": true,
+                        "isSafe": true,
+                        "connectedRegions": [
+                            "DSRT_SANDDUNES",
+                            "LOST_OASIS"
+                        ]
+                    },
+                    {
+                        "name": "오래된 성소",
+                        "spotCode": "OASIS_OLDTEMPLE",
+                        "bgm": "lost_oasis.mp3",
+                        "isCampable": false,
+                        "isFishable": false,
+                        "isSafe": false,
+                        "connectedRegions": [
+                            "DSRT_SANDDUNES",
+                            "LOST_OASIS"
+                        ]
+                    }
+                ],
+                "monsters": [
+                    "MNC_021",
+                    "MNC_022"
+                ],
+                "events": []
+            }
+        }
+    },
+    "남쪽 바다": {
+        "regionCode": "SOUTH_SEA",
+        "weatherForecast": [],
+        "currentWeather": null,
+        "regions": {
+            "푸른 해변": {
+                "areaCode": "SOUTH_BLUEBEACH",
+                "spots": [
+                    {
+                        "name": "모래사장",
+                        "spotCode": "SEA_SANDYBEACH",
+                        "bgm": "beach_waves.mp3",
+                        "isCampable": true,
+                        "isFishable": true,
+                        "isSafe": true,
+                        "connectedRegions": [
+                            "SOUTH_BLUEBEACH",
+                            "SOUTH_DEEPSEA"
+                        ]
+                    },
+                    {
+                        "name": "해변 바위",
+                        "spotCode": "SEA_ROCKYBEACH",
+                        "bgm": "beach_waves.mp3",
+                        "isCampable": false,
+                        "isFishable": true,
+                        "isSafe": true,
+                        "connectedRegions": [
+                            "SOUTH_BLUEBEACH"
+                        ]
+                    },
+                    {
+                        "name": "물결의 정원",
+                        "spotCode": "SEA_WAVEGARDEN",
+                        "bgm": "beach_waves.mp3",
+                        "isCampable": false,
+                        "isFishable": true,
+                        "isSafe": false,
+                        "connectedRegions": [
+                            "SOUTH_DEEPSEA"
+                        ]
+                    }
+                ],
+                "monsters": [
+                    "MNC_023",
+                    "MNC_024"
+                ],
+                "events": []
+            },
+            "심해의 입구": {
+                "areaCode": "SOUTH_DEEPSEA",
+                "spots": [
+                    {
+                        "name": "깊은 바다의 입구",
+                        "spotCode": "SEA_DEEPSEAGATE",
+                        "bgm": "deep_sea.mp3",
+                        "isCampable": false,
+                        "isFishable": false,
+                        "isSafe": false,
+                        "connectedRegions": [
+                            "SOUTH_BLUEBEACH",
+                            "SOUTH_OCEANICRESOURCE"
+                        ]
+                    },
+                    {
+                        "name": "돌고래의 동굴",
+                        "spotCode": "SEA_DOLPHINCAVE",
+                        "bgm": "deep_sea.mp3",
+                        "isCampable": false,
+                        "isFishable": true,
+                        "isSafe": false,
+                        "connectedRegions": [
+                            "SOUTH_DEEPSEA"
+                        ]
+                    },
+                    {
+                        "name": "심해의 유적",
+                        "spotCode": "SEA_DEEPSEARUINS",
+                        "bgm": "deep_sea.mp3",
+                        "isCampable": false,
+                        "isFishable": false,
+                        "isSafe": false,
+                        "connectedRegions": [
+                            "SOUTH_DEEPSEA"
+                        ]
+                    }
+                ],
+                "monsters": [
+                    "MNC_025",
+                    "MNC_026"
+                ],
+                "events": []
+            },
+            "거대 해양 정수": {
+                "areaCode": "SOUTH_OCEANICRESOURCE",
+                "spots": [
+                    {
+                        "name": "바다의 심장",
+                        "spotCode": "SEA_OCEANHEART",
+                        "bgm": "oceanic_deep.mp3",
+                        "isCampable": false,
+                        "isFishable": false,
+                        "isSafe": false,
+                        "connectedRegions": [
+                            "SOUTH_DEEPSEA"
+                        ]
+                    },
+                    {
+                        "name": "흑조의 섬",
+                        "spotCode": "SEA_BLACKISLAND",
+                        "bgm": "oceanic_deep.mp3",
+                        "isCampable": true,
+                        "isFishable": true,
+                        "isSafe": true,
+                        "connectedRegions": [
+                            "SOUTH_DEEPSEA",
+                            "SOUTH_OCEANICRESOURCE"
+                        ]
+                    },
+                    {
+                        "name": "심연의 대지",
+                        "spotCode": "SEA_ABYSSALFLOOR",
+                        "bgm": "oceanic_deep.mp3",
+                        "isCampable": false,
+                        "isFishable": false,
+                        "isSafe": false,
+                        "connectedRegions": [
+                            "SOUTH_OCEANICRESOURCE"
+                        ]
+                    }
+                ],
+                "monsters": [
+                    "MNC_027",
+                    "MNC_028"
+                ],
+                "events": []
+            }
+        }
+    }
+}

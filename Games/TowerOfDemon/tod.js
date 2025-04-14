@@ -11,204 +11,122 @@ const discardSound = new Audio('audio/trash_card.wav');
 const cancelSound = new Audio('audio/cancel.wav');
 
 
-// 날씨 목록
-const weatherData = {
-    "에리디아 평원": {
-        types: {
-            "맑음": 50,
-            "흐림": 20,
-            "비": 20,
-            "안개": 10
-        }
-    },
-    "대삼림": {
-        types: {
-            "맑음": 30,
-            "비": 30,
-            "폭우": 25,
-            "짙은 안개": 15
-        }
-    },
-    "영원의 화산": {
-        types: {
-            "맑음": 20,
-            "화산재": 40,
-            "연기": 25,
-            "번개": 15
-        }
-    },
-    "화산지역": {
-        types: {
-            "연기": 35,
-            "재낙하": 40,
-            "뜨거운 돌풍": 25
-        }
-    },
-    "사막": {
-        types: {
-            "맑음": 40,
-            "모래폭풍": 30,
-            "건조": 20,
-            "사막 번개": 10
-        }
-    }
+// 전역 변수 선언
+let weatherData, worldMap, gameState,timePeriods;
+const inventory = {
+    items: [
+        { id: "sword001", quantity: 1 },
+        { id: "potion001", quantity: 3 },
+        { id: "armor001", quantity: 1 }
+    ]
 };
-const worldMap = {
-    "에리디아 평원": {
-        weatherForecast: Array.from({ length: 7 }, () => generateWeather("에리디아 평원")), // 7일치 예보
-        currentWeather: null,
-        regions: {
-            "에렌투스": {
-                spots: ["광장", "여관", "시장", "모험가 길드"],
-                bgm: "calm_meadow.mp3",
-                monsters: [],
-                events: ["퀘스트 수령", "아이템 상점", "길드 가입"]
-            },
-            "고대 전초기지": {
-                spots: ["입구", "중앙 격납고", "감시탑"],
-                bgm: "abandoned_base.mp3",
-                monsters: ["고대 병기", "방황하는 영혼"],
-                events: ["보물 상자 발견", "기계 부활"]
-            },
-            "사냥터 입구": {
-                spots: ["덩굴지대", "수풀길", "야영지"],
-                bgm: "hunting_path.mp3",
-                monsters: ["야생 늑대", "숲 도마뱀"],
-                events: ["추적자 퀘스트", "은신처 발견"]
-            }
-        }
-    },
-    "대삼림": {
-        weatherForecast: Array.from({ length: 7 }, () => generateWeather("대삼림")), // 7일치 예보
-        currentWeather: null,
-        regions: {
-            "고목의 숲": {
-                spots: ["거목 아래", "숲속 연못", "숨겨진 길"],
-                bgm: "forest_depths.mp3",
-                monsters: ["숲의 정령", "독나무 뱀"],
-                events: ["비밀 퀘스트", "고대의 소환진"]
-            },
-            "엘프 성역": {
-                spots: ["입구", "의식의 제단", "엘프 정원"],
-                bgm: "elven_sanctuary.mp3",
-                monsters: [],
-                events: ["엘프 의식 참관", "영창 퀘스트"]
-            },
-            "맹수의 둥지": {
-                spots: ["야수의 동굴", "뼈무덤", "숨겨진 구역"],
-                bgm: "beast_den.mp3",
-                monsters: ["맹렬한 곰", "동굴 뱀"],
-                events: ["야수 소굴 파괴", "사냥꾼의 유품"]
-            }
-        }
-    },
-    "영원의 화산": {
-        weatherForecast: Array.from({ length: 7 }, () => generateWeather("영원의 화산")), // 7일치 예보
-        currentWeather: null,
-        regions: {
-            "분화구 입구": {
-                spots: ["불의 문", "화산지대 경계", "감시초소"],
-                bgm: "volcano_warning.mp3",
-                monsters: ["불 도마뱀", "용암 슬라임"],
-                events: ["열풍 경보", "화산의 흔적 조사"]
-            },
-            "불의 신전": {
-                spots: ["신전 앞마당", "불꽃 회랑", "제단"],
-                bgm: "fire_temple.mp3",
-                monsters: ["불꽃 정령", "타락한 사제"],
-                events: ["제단 봉인 해제", "불꽃 심판 이벤트"]
-            },
-            "용암 터널": {
-                spots: ["용암강", "돌다리", "열기 방"],
-                bgm: "lava_tunnel.mp3",
-                monsters: ["마그마 골렘", "화염 도마뱀"],
-                events: ["용암 폭발 피하기", "지열 조정 장치 발견"]
-            }
-        }
-    },
-    "화산지역": {
-        weatherForecast: Array.from({ length: 7 }, () => generateWeather("화산지역")), // 7일치 예보
-        currentWeather: null,
-        regions: {
-            "잿빛 고원": {
-                spots: ["바위 언덕", "잿더미 평지", "붕괴된 탑"],
-                bgm: "ashen_plateau.mp3",
-                monsters: ["잿빛 늑대", "돌가루 정령"],
-                events: ["불씨 수거 퀘스트", "탑 조사"]
-            },
-            "연기 협곡": {
-                spots: ["협곡 입구", "흐릿한 절벽", "연기 바위길"],
-                bgm: "smoky_canyon.mp3",
-                monsters: ["연기 악령", "화산 바위벌레"],
-                events: ["길 잃은 탐험가 구조", "연기 폭풍 예측"]
-            }
-        }
-    },
-    "사막": {
-        weatherForecast: Array.from({ length: 7 }, () => generateWeather("사막")), // 7일치 예보
-        currentWeather: null,
-        regions: {
-            "모래 언덕": {
-                spots: ["바람 언덕", "낙타 야영지", "모래 폭풍 지대"],
-                bgm: "desert_wind.mp3",
-                monsters: ["사막 정찰자", "모래뱀"],
-                events: ["모래 폭풍 회피", "상인단 호위"]
-            },
-            "유적지 입구": {
-                spots: ["파손된 문", "조각상 앞", "폐허"],
-                bgm: "ruins_gate.mp3",
-                monsters: ["사막 망령", "부서진 골렘"],
-                events: ["고대 유물 조사", "비밀 통로 발견"]
-            },
-            "잃어버린 오아시스": {
-                spots: ["야자수 숲", "작은 연못", "오래된 성소"],
-                bgm: "lost_oasis.mp3",
-                monsters: ["물 정령", "암살자 도적"],
-                events: ["회복의 축복", "비밀 의식"]
-            }
-        }
-    }
+
+window.onload = () => {
+    // JSON 파일들과 로컬 스토리지 데이터를 동시에 불러오기
+    Promise.all([
+        loadJSON('data/weatherData.json'),
+        loadJSON('data/worldMap.json'),
+        loadJSON('data/itemData.json'),
+        loadJSON('data/gameState.json'), // gameState를 JSON으로 불러오기
+        loadJSON('data/timeData.json') // timePeriods를 JSON으로 불러오기
+    ]).then(([loadedWeather, loadedWorld, loadedItems, loadedGameState, loadedTimePeriods]) => {
+        // JSON 파일들이 정상적으로 로드된 후, 데이터를 초기화
+        weatherData = loadedWeather;
+        worldMap = loadedWorld;
+        itemsDatabase = loadedItems; // 아이템 데이터베이스 설정
+        gameState = loadedGameState; // 게임 상태 로드
+        timePeriods = loadedTimePeriods.timePeriods; // 시간대 데이터 로드
+
+        // worldMap의 날씨 예보 업데이트
+        Object.keys(worldMap).forEach(region => {
+            worldMap[region].weatherForecast = Array.from({ length: 7 }, () => generateWeather(region));
+        });
+
+        console.log('데이터 로드 완료!');
+
+        // 초기화 함수들 실행
+        initializeForecast();
+        initializeGameState();
+    }).catch(error => {
+        console.error('JSON 로딩 중 에러 발생:', error);
+    });
 };
+
+// JSON 데이터를 비동기적으로 로드하는 함수
+async function loadJSON(path) {
+    try {
+        const res = await fetch(path);
+        return await res.json();
+    } catch (error) {
+        console.error(`Failed to load JSON from ${path}:`, error);
+        return null;
+    }
+}
+
+
+// 게임 데이터 저장하기
+function saveGameData() {
+    try {
+        localStorage.setItem('weatherData', JSON.stringify(weatherData));
+        localStorage.setItem('worldMap', JSON.stringify(worldMap));
+        localStorage.setItem('gameState', JSON.stringify(gameState));
+        localStorage.setItem('timeData', JSON.stringify(timePeriods));
+
+        console.log('게임 데이터가 로컬 스토리지에 저장되었습니다.');
+    } catch (error) {
+        console.error('게임 데이터를 저장하는 중 에러 발생:', error);
+    }
+}
+
+// 인벤토리 저장하기
+function saveInventory() {
+    try {
+        localStorage.setItem('inventory', JSON.stringify(inventory));
+        console.log('인벤토리 저장 완료!');
+    } catch (error) {
+        console.error('인벤토리를 저장하는 중 에러 발생:', error);
+    }
+}
+
+// 아이템 정보 불러오기
+function getItemInfo(itemId) {
+    return itemsDatabase[itemId]; // itemsDatabase는 로드된 아이템 데이터가 담긴 객체
+}
+
+// 인벤토리에서 아이템 사용하기
+function useItem(itemId) {
+    const item = getItemInfo(itemId);
+    if (item) {
+        // 아이템 사용 로직 처리
+        if (item.type === '소모품') {
+            // 예: 체력 회복 등의 효과 적용
+        }
+
+        // 아이템 수량 감소
+        const inventoryItem = inventory.items.find(i => i.id === itemId);
+        if (inventoryItem) {
+            inventoryItem.quantity -= 1;
+            if (inventoryItem.quantity <= 0) {
+                inventory.items = inventory.items.filter(i => i.id !== itemId);
+            }
+        }
+        
+        // 아이템 사용 후 인벤토리 저장
+        saveInventory();
+    }
+}
+
+// // 데이터가 변경될 때마다 자동 저장할 수 있도록 "빠른 저장" 기능 구현
+// document.getElementById('saveButton').addEventListener('click', () => {
+//     saveGameData();
+//     saveInventory();
+// });
+
 //시간 
 let currentGameTime = 480; // 08:00부터 시작 (단위: 분)
 let currentDay = 1;
 
 let isWaiting = false;
-
-// 게임 초기 상태 변수 정의
-const gameState = {
-    level: 1,
-    exp: 0,
-    expMax: 100,
-    place: {
-        region: '에리디아 평원',
-        area: '에렌투스',
-        spot: '모험가 길드'
-    },
-    gold: 0,
-    playerInfo: {
-        name: '???',
-        hp: 100,
-        hpMax: 100,
-        mp: 30,
-        mpMax: 30,
-        stamina: 50,
-        staminaMax: 50,
-        hunger: 100,
-        thirst: 100
-    },
-    weather: '☀️ 맑음',
-    turn: '플레이어',
-    statPoints: 3, 
-    stats: {
-        힘: 5,
-        지능: 5,
-        민첩: 5,
-        인내: 5,
-        행운: 5
-    }
-};
-
 // 배경음악 제어를 위한 오디오 객체
 let currentBGM = null;
 
@@ -248,6 +166,7 @@ function updateLocationDisplay() {
     document.querySelector('.place-name').textContent = `${region} - ${area}`;
     document.querySelector('.place-detail').textContent = spot;
 }
+
 function switchBGM(newSrc) {
     const fadeOutDuration = 1000;
 
@@ -272,33 +191,36 @@ function switchBGM(newSrc) {
 function playNewBGM(src) {
     const audio = new Audio(src);
     audio.loop = true;
-    audio.volume = 0;
-    audio.play();
+    audio.volume = 0; // 처음에는 음소거 상태로 시작
+    audio.muted = true; // 음소거 상태로 시작
+    audio.play().then(() => {
+        audio.muted = false; // 음소거 해제
+        // 페이드 인 효과
+        const step = 0.05;
+        const fadeIn = setInterval(() => {
+            if (audio.volume < 1 - step) {
+                audio.volume += step;
+            } else {
+                audio.volume = 1;
+                clearInterval(fadeIn);
+            }
+        }, 1000 * step);
+    }).catch(error => {
+        console.error('Error playing audio:', error);
+    });
+    
     currentBGM = audio;
-
-    // 페이드 인
-    const step = 0.05;
-    const fadeIn = setInterval(() => {
-        if (audio.volume < 1 - step) {
-            audio.volume += step;
-        } else {
-            audio.volume = 1;
-            clearInterval(fadeIn);
-        }
-    }, 1000 * step);
 }
-
-
-
 
 // 시간대 판별 함수
 function getTimePeriod(mins) {
     const hour = Math.floor(mins / 60);
-    if (hour >= 4 && hour < 7) return 'dawn';
-    if (hour >= 7 && hour < 12) return 'morning';
-    if (hour >= 12 && hour < 17) return 'noon';
-    if (hour >= 17 && hour < 20) return 'evening';
-    return 'night';
+    for (let period of timePeriods) {
+        if (hour >= period.startHour && hour < period.endHour) {
+            return period.id;
+        }
+    }
+    return 'night';  // 기본적으로 밤으로 설정
 }
 
 function updateWeather() {
@@ -395,24 +317,23 @@ function updateAllRegionWeather() {
 function updateDayDisplay() {
     document.querySelector('.day-count').textContent = ` ${currentDay}일차`;
 }
+
 // 시간 표시 업데이트
 function updateTimeDisplay() {
     const hour = Math.floor(currentGameTime / 60);
     const minute = currentGameTime % 60;
     const formatted = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
-    document.querySelector('.time-now').textContent = ` ${formatted}`;
+    document.querySelector('.time-now').textContent = `${formatted}`;
 
     const period = getTimePeriod(currentGameTime);
-    const periodTextMap = {
-        dawn: '🌅 새벽',
-        morning: '🌄 아침',
-        noon: '🌞 낮',
-        evening: '🌇 저녁',
-        night: '🌃 밤'
-    };
-    document.querySelector('.time-period').textContent = periodTextMap[period] || '';
+    const periodData = timePeriods.find(p => p.id === period);
+    if (periodData) {
+        document.querySelector('.time-period').textContent = `${periodData.label} ${periodData.description || ''}`;
+    }
+
     updateDayDisplay();
 }
+
 function endTurn() {
     isWaiting = true;
     endTurnButton.classList.add('disabled');
@@ -1091,16 +1012,22 @@ function initializeGameState() {
     document.querySelector('.turn-info').textContent = `턴: ${gameState.turn}`;
     updateWeather();
     updateTimeDisplay();
-    const locationInfo = worldMap[gameState.place.region][gameState.place.area];
+    const spots = worldMap[gameState.place.region].regions[gameState.place.area].spots;
+    // "모험가 길드"의 spot 객체를 찾고 해당 bgm만 출력
+    const targetSpot = spots.find(spot => spot.name === gameState.place.spot);
+    if (targetSpot) {
+        console.log(`BGM for "모험가 길드": ${targetSpot.bgm}`);
+        switchBGM('bgm/background/'+targetSpot.bgm);
+    } else {
+        console.log(gameState.place.spot+" 를 찾을 수 없습니다.");
+    }
+
+
+
+
 console.log("현재 위치:",gameState.place.region + " > " + gameState.place.area+" > " +gameState.place.spot);
-console.log("배경음악:", locationInfo.bgm);
 }
 
-// 페이지 로드 시 초기화
-window.onload = () => {
-    initializeForecast();
-    initializeGameState();
-};
 
 window.addEventListener('contextmenu', function (e) {
     e.preventDefault();
