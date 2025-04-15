@@ -21,9 +21,69 @@ body {
     overflow: hidden;
     transition: all 2s ease-in-out;
 }
+
 * {
     user-select: none;
 }
+/* 전체 화면 덮는 타이틀 스크린 */
+.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #121212;
+    z-index: 9999;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+/* 배경 이미지 스타일 (선택) */
+.background {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.5;
+    z-index: -1;
+}
+
+/* 타이틀 UI 영역 */
+.title-ui {
+    text-align: center;
+}
+
+/* 타이틀 이미지 (로고) */
+.game-title {
+    width: 400px;
+    margin-bottom: -10px;
+    filter: drop-shadow(0 0 8px #000);
+}
+
+/* 버튼 공통 스타일 (deck-button 느낌 반영) */
+.title-button {
+    display: block;
+    width: 220px;
+    padding: 16px 0;
+    margin: 12px auto;
+    background-color: #55373764;
+    border: none;
+    border-radius: 8px;
+    color: rgb(198, 189, 163);
+    font-size: 18px;
+    font-family: 'Segoe UI', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.title-button:hover {
+    background-color: #96222259;
+}
+
+
 /* 상단 HUD */
 .top-hud {
     display: flex;
@@ -41,16 +101,19 @@ body {
     flex-direction: column;
     align-items: center;
 }
-.place-info{
+
+.place-info {
     margin-right: 230px;
 }
 
-.place-name{
+.place-name {
     font-size: 24px;
 }
-.place-detail{
+
+.place-detail {
     font-size: 18px;
 }
+
 .exp-bar {
     background: #444;
     width: 100px;
@@ -183,10 +246,11 @@ body {
     transition: all ease-in-out 2s;
     height: 220px;
 }
+
 .card {
     width: 180px;
     left: 0;
-    top:0;
+    top: 0;
     height: 260px;
     background: #2a2a2a;
     border: 2px solid #555;
@@ -206,6 +270,7 @@ body {
     /* 텍스트 선택 방지 (Safari) */
 
 }
+
 .card-inner {
     width: 100%;
     height: 100%;
@@ -247,6 +312,7 @@ body {
     font-size: 12px;
     border: 1px solid #ccc;
 }
+
 .card-image {
     width: 160px;
     height: 100px;
@@ -261,13 +327,14 @@ body {
     font-size: 1em;
     margin-bottom: 4px;
 }
+
 .card-description {
     font-size: 0.8em;
     color: #ccc;
 }
 
 /* 버튼 및 사이드 UI */
-.discard-area{
+.discard-area {
     background: #3a3a3a;
     padding: 40px 40px;
     border-radius: 8px;
@@ -279,6 +346,7 @@ body {
     justify-content: center;
     transition: all 0.4s ease;
 }
+
 .deck-button {
     background: #3a3a3a;
     padding: 40px 40px;
@@ -301,7 +369,8 @@ body {
     border-left: 2px solid #333;
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* 맨 위/아래 요소 간 분리 */
+    justify-content: space-between;
+    /* 맨 위/아래 요소 간 분리 */
     align-items: center;
     padding: 20px 0;
     box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.6);
@@ -319,16 +388,19 @@ body {
     height: 200px;
 
     background-color: #2d2d2d;
-    border: 3px solid #00aaff; /* 파란색 경계선 */
+    border: 3px solid #00aaff;
+    /* 파란색 경계선 */
     border-radius: 10px;
 
-    box-shadow: 0px 4px 0px #0077aa; /* 아래 3D 입체감 */
+    box-shadow: 0px 4px 0px #0077aa;
+    /* 아래 3D 입체감 */
     color: white;
     cursor: pointer;
     user-select: none;
 
     transition: 0.2s ease-in-out;
 }
+
 .end-turn-button:active {
     transform: translateY(2px);
     box-shadow: 0px 2px 0px #005577;
@@ -343,6 +415,7 @@ body {
     border: 3px solid #ffc400;
     box-shadow: none;
 }
+
 .time-period {
     font-size: 1.4em;
     font-weight: bold;
@@ -358,15 +431,18 @@ body {
     color: #f0f0f0;
     text-shadow: 1px 1px 2px #000;
 }
+
 .card-disabled {
     opacity: 0.4;
     pointer-events: none;
     cursor: not-allowed;
 }
+
 .discard-area.active {
     border-color: red;
     background-color: rgba(255, 0, 0, 0.2);
 }
+
 .particle-burst {
     position: absolute;
     width: 50px;
@@ -383,14 +459,17 @@ body {
         transform: scale(1);
         opacity: 1;
     }
+
     100% {
         transform: scale(6);
         opacity: 0;
     }
 }
+
 .shrink-out {
     animation: shrinkAway 0.4s ease forwards;
 }
+
 @keyframes shrinkAway {
     0% {
         transform: scale(1) rotate(0deg);
@@ -402,33 +481,43 @@ body {
         opacity: 0;
     }
 }
-#card-name{
+
+#card-name {
     color: #ffffff;
     margin-top: 4px;
     margin-bottom: 4px;
 }
-#card-effect{
+
+#card-effect {
     color: #00aaff;
     font-size: 16px;
 }
-#card-description{
-    font-size:12px;
+
+#card-description {
+    font-size: 12px;
 }
+
 .mana-ui {
     position: fixed;
-    bottom: 230px; /* card-deck보다 위 */
+    bottom: 230px;
+    /* card-deck보다 위 */
     left: 35px;
-    background: linear-gradient(135deg, #3a3a8f, #5f5fbf); /* 기존 그라디언트 */
+    background: linear-gradient(135deg, #3a3a8f, #5f5fbf);
+    /* 기존 그라디언트 */
     color: white;
-    border-radius: 16px; /* 둥근 모서리 */
+    border-radius: 16px;
+    /* 둥근 모서리 */
     font-weight: bold;
-    font-size: 18px; /* 글씨 크기 약간 증가 */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6); /* 더 깊고 강한 그림자 */
+    font-size: 18px;
+    /* 글씨 크기 약간 증가 */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+    /* 더 깊고 강한 그림자 */
     z-index: 10;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* 부드러운 애니메이션 */
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    /* 부드러운 애니메이션 */
     padding-right: 0px;
     padding-right: 5px;
 }
@@ -436,37 +525,48 @@ body {
 
 .hp-ui {
     position: fixed;
-    bottom: 280px; /* mana-ui보다 더 위에 위치 */
+    bottom: 280px;
+    /* mana-ui보다 더 위에 위치 */
     left: 30px;
-    background: linear-gradient(135deg, #b42b2b, #e44b4b); /* 붉은색 계열의 그라디언트 */
+    background: linear-gradient(135deg, #b42b2b, #e44b4b);
+    /* 붉은색 계열의 그라디언트 */
     color: white;
-    border-radius: 16px; /* 둥근 모서리 */
+    border-radius: 16px;
+    /* 둥근 모서리 */
     font-weight: bold;
-    font-size: 18px; /* 글씨 크기 약간 증가 */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6); /* 깊은 그림자 */
+    font-size: 18px;
+    /* 글씨 크기 약간 증가 */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+    /* 깊은 그림자 */
     z-index: 10;
     display: flex;
     align-items: center;
     justify-content: space-around;
-    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* 애니메이션 */
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    /* 애니메이션 */
     padding-right: 0px;
     padding-right: 5px;
 }
 
-#ui-name{
+#ui-name {
     background-color: #000000;
     border: #646464 2px solid;
-    border-radius: 16px; /* 둥근 모서리 */
+    border-radius: 16px;
+    /* 둥근 모서리 */
     padding: 4px;
     margin-right: 10px;
 }
-.hp-ui #ui-name{
+
+.hp-ui #ui-name {
     border: #e44b4b 2px solid;
 }
-.mana-ui #ui-name{
+
+.mana-ui #ui-name {
     border: #5f5fbf 2px solid;
 }
-.hp-bar, .mp-bar {
+
+.hp-bar,
+.mp-bar {
     width: 100px;
     height: 25px;
     background: #ddd;
@@ -474,21 +574,27 @@ body {
     overflow: hidden;
 }
 
-.hp-fill, .mp-fill {
+.hp-fill,
+.mp-fill {
     height: 100%;
-    width: 100%; /* 기본은 가득 채움 */
-    transition: width 0.5s ease-in-out; /* 애니메이션 추가 */
+    width: 100%;
+    /* 기본은 가득 채움 */
+    transition: width 0.5s ease-in-out;
+    /* 애니메이션 추가 */
 }
 
 .hp-fill {
-    background: linear-gradient(135deg, #e44b4b, #b42b2b); /* HP 붉은색 그라디언트 */
+    background: linear-gradient(135deg, #e44b4b, #b42b2b);
+    /* HP 붉은색 그라디언트 */
 }
 
 .mp-fill {
-    background: linear-gradient(135deg, #3a3a8f, #5f5fbf); /* MP 파란색 그라디언트 */
+    background: linear-gradient(135deg, #3a3a8f, #5f5fbf);
+    /* MP 파란색 그라디언트 */
 }
 
-#manaValue,#hpValue{
+#manaValue,
+#hpValue {
     position: fixed;
 }
 
@@ -497,6 +603,7 @@ body {
     background-color: #5e5e5e;
     border-radius: 10%;
 }
+
 .stat-row {
     display: flex;
     justify-content: space-between;
@@ -504,19 +611,23 @@ body {
     margin: 6px 0;
     font-size: 20px;
 }
+
 .stat-row button {
     margin-left: 10px;
     padding: 2px 12px;
-    border-radius: 20px;;
+    border-radius: 20px;
+    ;
     background-color: #222;
-    color:rgb(255, 255, 255);
-    font-size:  20px;
+    color: rgb(255, 255, 255);
+    font-size: 20px;
     cursor: pointer;
     transition: transform 0.05s ease, background-color 0.2s;
 }
+
 .stat-row button:hover {
     background-color: #666;
 }
+
 .stat-row button:active {
     transform: scale(0.9);
     background-color: #222;
@@ -535,7 +646,7 @@ body {
     transition: all 0.2s ease-in-out;
     position: absolute;
     z-index: 5;
-    right:90px;
+    right: 90px;
     bottom: 600px;
 }
 

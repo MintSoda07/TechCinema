@@ -10,6 +10,17 @@
 </head>
 
 <body>
+    <!-- 게임 시작 전 화면, 메인화면-->
+    <div id="title-screen" class="fullscreen">
+        <img src="icons/title/tod_back.png" class="background" />
+        <div class="title-ui">
+            <img src="icons/title/tod_title.png" class="game-title" />
+            <button class="title-button" onclick="startNewGame()">게임 시작</button>
+            <button class="title-button" onclick="continueGame()">이어하기</button>
+            <button class="title-button" onclick="openSettings()">설정</button>
+            <button class="title-button" onclick="exitGame()">종료</button>
+        </div>
+    </div>
     <!-- 상단 HUD -->
     <header class="top-hud">
         <div class="left-info">

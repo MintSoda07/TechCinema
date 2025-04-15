@@ -12,7 +12,7 @@ const cancelSound = new Audio('audio/cancel.wav');
 
 
 // 전역 변수 선언
-let weatherData, worldMap, gameState,timePeriods;
+let weatherData, worldMap, gameState, timePeriods;
 const inventory = {
     items: [
         { id: "sword001", quantity: 1 },
@@ -51,6 +51,26 @@ window.onload = () => {
         console.error('JSON 로딩 중 에러 발생:', error);
     });
 };
+
+function startNewGame() {
+    // 타이틀 화면 숨기고 → 저장 슬롯 선택 UI 보여주기
+    document.getElementById('title-screen').style.display = 'none';
+    showSaveSlotSelection('new');
+}
+
+function continueGame() {
+    document.getElementById('title-screen').style.display = 'none';
+    showSaveSlotSelection('load');
+}
+
+function openSettings() {
+    alert('설정창 열기');
+}
+
+function exitGame() {
+    alert('게임 종료 처리 (웹이라면 브라우저 닫기 안내)');
+}
+
 
 // JSON 데이터를 비동기적으로 로드하는 함수
 async function loadJSON(path) {
@@ -110,7 +130,7 @@ function useItem(itemId) {
                 inventory.items = inventory.items.filter(i => i.id !== itemId);
             }
         }
-        
+
         // 아이템 사용 후 인벤토리 저장
         saveInventory();
     }
@@ -208,7 +228,7 @@ function playNewBGM(src) {
     }).catch(error => {
         console.error('Error playing audio:', error);
     });
-    
+
     currentBGM = audio;
 }
 
@@ -289,7 +309,7 @@ function initializeForecast() {
 
         // 7일치 날씨 예보 출력
         console.log(`지역: ${region} - 7일 날씨 예보: ${regionData.weatherForecast.join(", ")}`);
-        
+
         // 현재 날씨 출력
         console.log(`지역: ${region} - 현재 날씨: ${regionData.currentWeather}`);
     });
@@ -299,7 +319,7 @@ function initializeForecast() {
 function updateRegionWeatherDisplay(region) {
     const regionWeather = worldMap[region].currentWeather;
     //document.querySelector(`.weather-${region}`).textContent = `${region}: ${regionWeather}`;
-    console.log("지역 날씨 예보 : " +region + regionWeather);
+    console.log("지역 날씨 예보 : " + region + regionWeather);
 }
 
 
@@ -347,10 +367,10 @@ function endTurn() {
         updateWeather(); // 지역 날씨 갱신
         Object.keys(worldMap).forEach(region => {
             const regionData = worldMap[region];
-    
+
             // 7일치 날씨 예보 출력
             console.log(`지역: ${region} - 7일 날씨 예보: ${regionData.weatherForecast.join(", ")}`);
-            
+
             // 현재 날씨 출력
             console.log(`지역: ${region} - 현재 날씨: ${regionData.currentWeather}`);
 
@@ -385,9 +405,9 @@ let cardData = [
         undiscardable: true,
         type: '행동',
         cost: 0,
-        usable:true,
-        disposialAfterLeave:true,
-        oneTimeUse:true,
+        usable: true,
+        disposialAfterLeave: true,
+        oneTimeUse: true,
         id: 'guild_quest',
         tags: ['길드', '행동', '게시판 확인']
     },
@@ -399,9 +419,9 @@ let cardData = [
         undiscardable: true,
         type: '행동',
         cost: 0,
-        usable:true,
-        disposialAfterLeave:true,
-        oneTimeUse:false,
+        usable: true,
+        disposialAfterLeave: true,
+        oneTimeUse: false,
         id: 'guild_talk',
         tags: ['길드', '행동', '대화하기']
     },
@@ -413,9 +433,9 @@ let cardData = [
         undiscardable: true,
         type: '행동',
         cost: 0,
-        usable:true,
-        disposialAfterLeave:true,
-        oneTimeUse:false,
+        usable: true,
+        disposialAfterLeave: true,
+        oneTimeUse: false,
         id: 'guild_leave',
         tags: ['길드', '행동', '마을이동']
     }
@@ -431,9 +451,9 @@ let guild_set = [
         undiscardable: true,
         type: '행동',
         cost: 0,
-        usable:true,
-        disposialAfterLeave:true,
-        oneTimeUse:true,
+        usable: true,
+        disposialAfterLeave: true,
+        oneTimeUse: true,
         id: 'guild_quest',
         tags: ['길드', '행동', '게시판 확인']
     },
@@ -445,9 +465,9 @@ let guild_set = [
         undiscardable: true,
         type: '행동',
         cost: 0,
-        usable:true,
-        disposialAfterLeave:true,
-        oneTimeUse:false,
+        usable: true,
+        disposialAfterLeave: true,
+        oneTimeUse: false,
         id: 'guild_talk',
         tags: ['길드', '행동', '대화하기']
     },
@@ -459,9 +479,9 @@ let guild_set = [
         undiscardable: true,
         type: '행동',
         cost: 0,
-        usable:true,
-        disposialAfterLeave:true,
-        oneTimeUse:false,
+        usable: true,
+        disposialAfterLeave: true,
+        oneTimeUse: false,
         id: 'guild_leave',
         tags: ['길드', '행동', '마을이동']
     }
@@ -471,46 +491,46 @@ let guild_set = [
 let guild_quest_set = [
     {
         name: '슬라임 소탕',
-            effect: '퀘스트 수락',
-            description: '요즘 슬라임의 수가 너무 많소. 세 놈만 잡으면, 두둑히 보수하겠소.',
-            image: 'icons/quest.png',
-            undiscardable: true,
-            type: '소탕 퀘스트',
-            cost: 0,
-            usable: true,
-            disposialAfterLeave: true,
-            oneTimeUse: true,
-            id: 'quest1',
-            tags: ['퀘스트', '초보자','전투','소탕']
-        },
-        {
-            name: '구리 원석이 필요하네.',
-            effect: '퀘스트 수락',
-            description: '구리 원석을 4개 구해서 대장간으로 가져와 주게나. 보수는.. 200G 즈음 주겠네.',
-            image: 'icons/quest.png',
-            undiscardable: true,
-            type: '수집 퀘스트',
-            cost: 0,
-            usable: true,
-            disposialAfterLeave: true,
-            oneTimeUse: true,
-            id: 'quest2',
-            tags: ['퀘스트', '초보자','비전투','수집']
-        },
-        {
-            name: '돌아가기',
-            effect: '마을로 돌아가기',
-            description: '퀘스트를 마친 후 마을로 돌아갑니다.',
-            image: 'icons/doorOut.png',
-            undiscardable: true,
-            type: '행동',
-            cost: 0,
-            usable: false,
-            disposialAfterLeave: true,
-            oneTimeUse: false,
-            id: 'back_to_town',
-            tags: ['길드','행동', '돌아가기']
-        }
+        effect: '퀘스트 수락',
+        description: '요즘 슬라임의 수가 너무 많소. 세 놈만 잡으면, 두둑히 보수하겠소.',
+        image: 'icons/quest.png',
+        undiscardable: true,
+        type: '소탕 퀘스트',
+        cost: 0,
+        usable: true,
+        disposialAfterLeave: true,
+        oneTimeUse: true,
+        id: 'quest1',
+        tags: ['퀘스트', '초보자', '전투', '소탕']
+    },
+    {
+        name: '구리 원석이 필요하네.',
+        effect: '퀘스트 수락',
+        description: '구리 원석을 4개 구해서 대장간으로 가져와 주게나. 보수는.. 200G 즈음 주겠네.',
+        image: 'icons/quest.png',
+        undiscardable: true,
+        type: '수집 퀘스트',
+        cost: 0,
+        usable: true,
+        disposialAfterLeave: true,
+        oneTimeUse: true,
+        id: 'quest2',
+        tags: ['퀘스트', '초보자', '비전투', '수집']
+    },
+    {
+        name: '돌아가기',
+        effect: '마을로 돌아가기',
+        description: '퀘스트를 마친 후 마을로 돌아갑니다.',
+        image: 'icons/doorOut.png',
+        undiscardable: true,
+        type: '행동',
+        cost: 0,
+        usable: false,
+        disposialAfterLeave: true,
+        oneTimeUse: false,
+        id: 'back_to_town',
+        tags: ['길드', '행동', '돌아가기']
+    }
 ];
 // 좌측 패널에 대한 내용이 있음
 // 패널 열기/닫기
@@ -520,7 +540,7 @@ function togglePanel() {
     statuSound.currentTime = 0;
     statuSound.play().catch(e => console.warn("dropCard.mp3 재생 실패", e));
 }
-function playStatusSound(){
+function playStatusSound() {
     statuSound.currentTime = 0;
     statuSound.play().catch(e => console.warn("pickCard.mp3 재생 실패", e));
 }
@@ -558,7 +578,7 @@ function showTab(tab) {
                 btn.textContent = '+';
                 btn.onclick = () => {
                     pickSound.currentTime = 0;
-        pickSound.play().catch(e => console.warn("pickCard.mp3 재생 실패", e));
+                    pickSound.play().catch(e => console.warn("pickCard.mp3 재생 실패", e));
                     gameState.stats[statName]++;
                     gameState.statPoints--;
                     showTab('status'); // UI 갱신
@@ -697,18 +717,18 @@ function addCard(card) {
 
             // 기본 간격
             let gap = cardWidth * 1.1;
-        
+
             if (total >= 6) {
                 gap = cardWidth * 0.8;
             }
-        
+
             // 화면 크기에 따라 덱 너비 제한
             if (window.innerWidth > 800) {
                 const maxTotalWidth = window.innerWidth / 2 + 60;
                 const maxGap = (maxTotalWidth - cardWidth) / (total - 1);
                 gap = Math.min(gap, maxGap);
             }
-        
+
             const totalWidth = gap * (total - 1) + cardWidth;
             const startX = (window.innerWidth - totalWidth) / 2 - 200;
             const y = window.innerHeight - 260;
@@ -863,7 +883,7 @@ function enableDrag(original, card) {
                 clone.remove();
                 renderHandCards();
                 return;
-                
+
             }
             // 카드 복원
             cardData.splice(index, 0, card);
@@ -916,11 +936,11 @@ function useCard(card) {
 function openQuestTab() {
     // 기존 카드 제거
     returnAllCardsToDeck(cardData.length);
-    
-    setTimeout(() => { addMultipleCards(guild_quest_set)}, 500);
-    
+
+    setTimeout(() => { addMultipleCards(guild_quest_set) }, 500);
+
     // 퀘스트 카드 추가
-    
+
 }
 
 
@@ -1017,15 +1037,15 @@ function initializeGameState() {
     const targetSpot = spots.find(spot => spot.name === gameState.place.spot);
     if (targetSpot) {
         console.log(`BGM for "모험가 길드": ${targetSpot.bgm}`);
-        switchBGM('bgm/background/'+targetSpot.bgm);
+        switchBGM('bgm/background/' + targetSpot.bgm);
     } else {
-        console.log(gameState.place.spot+" 를 찾을 수 없습니다.");
+        console.log(gameState.place.spot + " 를 찾을 수 없습니다.");
     }
 
 
 
 
-console.log("현재 위치:",gameState.place.region + " > " + gameState.place.area+" > " +gameState.place.spot);
+    console.log("현재 위치:", gameState.place.region + " > " + gameState.place.area + " > " + gameState.place.spot);
 }
 
 
@@ -1136,7 +1156,7 @@ function addExperience(amount) {
 function updateGameStateUI() {
     document.querySelector('.level').textContent = `Lv. ${gameState.level}`;
     document.querySelector('.exp-fill').style.width = `${(gameState.exp / gameState.expMax) * 100}%`;
-    document.querySelector('.place-name').textContent = gameState.place.region + " - " +gameState.place.area;
+    document.querySelector('.place-name').textContent = gameState.place.region + " - " + gameState.place.area;
     document.querySelector('.place-detail').textContent = gameState.place.spot;
     document.querySelector('.gold').textContent = `💰 ${gameState.gold}G`;
 
