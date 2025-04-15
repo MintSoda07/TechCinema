@@ -21,6 +21,42 @@
             <button class="title-button" onclick="exitGame()">종료</button>
         </div>
     </div>
+    
+<!-- 저장 슬롯 선택 화면 -->
+<div id="save-slot-selection" class="fullscreen" style="display: none;">
+    <div class="title-ui">
+        <h2>저장 슬롯 선택</h2>
+        <div id="slot-buttons">
+            <!-- 슬롯 버튼들 -->
+        </div>
+        <button class="title-button" onclick="goBackToTitle()">뒤로 가기</button>
+    </div>
+</div>
+<!-- 캐릭터 설정 화면 -->
+<div id="character-setup" class="fullscreen" style="display: none;">
+    <div class="title-ui">
+        <h2>캐릭터 설정</h2>
+        <form id="character-form">
+            <label for="character-name">이름:</label>
+            <input type="text" id="character-name" required />
+            <label for="character-gender">성별:</label>
+            <select id="character-gender" required>
+                <option value="male">남성</option>
+                <option value="female">여성</option>
+            </select>
+            
+            <!-- 직업 선택 영역 -->
+            <div class="class-selection-wrapper">
+                <h3>직업 선택</h3>
+                <div id="class-selection" class="class-selection-grid"></div>
+            </div>
+            
+            <button type="submit" class="title-button">설정 완료</button>
+        </form>
+    </div>
+</div>
+
+
     <!-- 상단 HUD -->
     <header class="top-hud">
         <div class="left-info">

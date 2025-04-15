@@ -1,0 +1,17 @@
+[
+    {
+        "id": "swordmaster",
+        "name": "소드마스터",
+        "description": "근접 전투의 대가, 강력한 공격력을 자랑."
+    },
+    {
+        "id": "mage",
+        "name": "마도사",
+        "description": "강력한 마법으로 전장을 지배하는 마법사."
+    },
+    {
+        "id": "ranger",
+        "name": "레인저",
+        "description": "멀리서 적을 정밀하게 처치하는 궁수형 클래스."
+    }
+]

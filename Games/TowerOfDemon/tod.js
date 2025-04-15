@@ -10,10 +10,12 @@ const turnEndSound = new Audio('audio/turn_end.wav');
 const discardSound = new Audio('audio/trash_card.wav');
 const cancelSound = new Audio('audio/cancel.wav');
 
+// 페이지 로드 시 실행
+//window.addEventListener('DOMContentLoaded', loadJobCards);
 
 // 전역 변수 선언
 let weatherData, worldMap, gameState, timePeriods;
-const inventory = {
+let inventory = {
     items: [
         { id: "sword001", quantity: 1 },
         { id: "potion001", quantity: 3 },
@@ -22,36 +24,29 @@ const inventory = {
 };
 
 window.onload = () => {
-    // JSON 파일들과 로컬 스토리지 데이터를 동시에 불러오기
-    Promise.all([
-        loadJSON('data/weatherData.json'),
-        loadJSON('data/worldMap.json'),
-        loadJSON('data/itemData.json'),
-        loadJSON('data/gameState.json'), // gameState를 JSON으로 불러오기
-        loadJSON('data/timeData.json') // timePeriods를 JSON으로 불러오기
-    ]).then(([loadedWeather, loadedWorld, loadedItems, loadedGameState, loadedTimePeriods]) => {
-        // JSON 파일들이 정상적으로 로드된 후, 데이터를 초기화
-        weatherData = loadedWeather;
-        worldMap = loadedWorld;
-        itemsDatabase = loadedItems; // 아이템 데이터베이스 설정
-        gameState = loadedGameState; // 게임 상태 로드
-        timePeriods = loadedTimePeriods.timePeriods; // 시간대 데이터 로드
-
-        // worldMap의 날씨 예보 업데이트
-        Object.keys(worldMap).forEach(region => {
-            worldMap[region].weatherForecast = Array.from({ length: 7 }, () => generateWeather(region));
-        });
-
-        console.log('데이터 로드 완료!');
-
-        // 초기화 함수들 실행
-        initializeForecast();
-        initializeGameState();
-    }).catch(error => {
-        console.error('JSON 로딩 중 에러 발생:', error);
-    });
+    loadJobCards
 };
+function getSlotKey(slotNumber, dataName) {
+    return `save_slot_${slotNumber}_gameState`;
+}
+function startNewGame() {
+    // 타이틀 화면 숨기고 → 저장 슬롯 선택 UI 보여주기
+    document.getElementById('title-screen').style.display = 'none';
+    showSaveSlotSelection('new');
+}
 
+function continueGame() {
+    document.getElementById('title-screen').style.display = 'none';
+    showSaveSlotSelection('load');
+}
+
+function openSettings() {
+    alert('설정창 열기');
+}
+
+function exitGame() {
+    alert('게임 종료 처리 (웹이라면 브라우저 닫기 안내)');
+}
 function startNewGame() {
     // 타이틀 화면 숨기고 → 저장 슬롯 선택 UI 보여주기
     document.getElementById('title-screen').style.display = 'none';
@@ -71,40 +66,221 @@ function exitGame() {
     alert('게임 종료 처리 (웹이라면 브라우저 닫기 안내)');
 }
 
+// 슬롯 선택 UI 표시
+function showSaveSlotSelection(mode) {
+    const saveSlotSelection = document.getElementById('save-slot-selection');
+    const slotButtons = document.getElementById('slot-buttons');
+    slotButtons.innerHTML = '';
 
-// JSON 데이터를 비동기적으로 로드하는 함수
-async function loadJSON(path) {
+    for (let i = 1; i <= 3; i++) {
+        const slotButton = document.createElement('button');
+        slotButton.classList.add('title-button');
+        slotButton.textContent = `슬롯 ${i}`;
+        slotButton.onclick = () => handleSlotSelection(i, mode);
+        slotButtons.appendChild(slotButton);
+    }
+
+    saveSlotSelection.style.display = 'flex';
+}
+
+// 슬롯 클릭 처리
+function handleSlotSelection(slotNumber, mode) {
+    const saveKey = `save_slot_${slotNumber}_gameState`; // 게임 상태를 저장하는 키
+    if (mode === 'new') {
+        showCharacterSetup(slotNumber);
+    } else if (mode === 'load') {
+        const savedData = localStorage.getItem(saveKey);
+
+        if (savedData) {
+            const data = JSON.parse(savedData);
+            alert(`슬롯 ${slotNumber}에서 이어하기.`);
+            // 이어하기 후 게임 로딩 로직
+            loadGameDataFromSlot(slotNumber, data);
+        } else {
+            alert(`슬롯 ${slotNumber}에 저장된 데이터가 없습니다.`);
+        }
+    }
+}
+let selectedClass = null;
+
+function loadGameDataFromSlot(slotNumber) {
     try {
-        const res = await fetch(path);
-        return await res.json();
+        weatherData = JSON.parse(localStorage.getItem(getSlotKey(slotNumber, 'weatherData'))) || {};
+        worldMap = JSON.parse(localStorage.getItem(getSlotKey(slotNumber, 'worldMap'))) || {};
+        gameState = JSON.parse(localStorage.getItem(getSlotKey(slotNumber, 'gameState'))) || {};
+        timePeriods = JSON.parse(localStorage.getItem(getSlotKey(slotNumber, 'timeData')))?.timePeriods || [];
+        inventory = JSON.parse(localStorage.getItem(getSlotKey(slotNumber, 'inventory'))) || { items: [] };
+        itemsDatabase = JSON.parse(localStorage.getItem('itemsDatabase')) || {};
+
+        console.log(`슬롯 ${slotNumber}에서 데이터 불러오기 완료!`);
+
+        // 이후 초기화 작업
+        initializeForecast();
+        initializeGameState();
     } catch (error) {
-        console.error(`Failed to load JSON from ${path}:`, error);
+        console.error(`슬롯 ${slotNumber}에서 데이터를 불러오는 중 오류 발생:`, error);
+    }
+}
+
+async function loadJobCards() {
+    const response = await fetch('data/jobs.json');
+    const jobs = await response.json();
+    const container = document.getElementById('class-selection');
+    container.innerHTML = '';
+
+    jobs.forEach(job => {
+        const card = document.createElement('div');
+        card.classList.add('job-card');
+        card.setAttribute('data-job-id', job.id);
+        card.onclick = () => toggleClassSelection(job.id);
+
+        card.innerHTML = `
+            <h4>${job.name}</h4>
+            <p>${job.description}</p>
+        `;
+
+        container.appendChild(card);
+    });
+}
+
+function toggleClassSelection(className) {
+    const cards = document.querySelectorAll('.job-card');
+    cards.forEach(card => {
+        const isSelected = card.getAttribute('data-job-id') === className;
+        card.classList.toggle('selected', isSelected);
+    });
+
+    selectedClass = className;
+}
+// 캐릭터 설정 UI 표시
+function showCharacterSetup(slotNumber) {
+    const characterSetup = document.getElementById('character-setup');
+    characterSetup.style.display = 'flex';
+    loadJobCards(); // 직업 카드 불러오기
+
+    const form = document.getElementById('character-form');
+    form.onsubmit = function (event) {
+        event.preventDefault();
+        if (!selectedClass) {
+            alert('직업을 선택해주세요!');
+            return;
+        }
+        saveCharacterData(slotNumber); // 슬롯 기반 저장
+    };
+}
+
+// 캐릭터 데이터를 해당 슬롯에 저장
+function saveCharacterData(slotNumber) {
+    const name = document.getElementById('character-name').value;
+    const gender = document.getElementById('character-gender').value;
+
+    const characterData = {
+        level: 1,
+        exp: 0,
+        expMax: 100,
+        place: {
+            region: "에리디아 평원", // 기본 지역
+            area: "에렌투스",        // 기본 지역 세부
+            spot: "모험가 길드"      // 기본 장소
+        },
+        gold: 0,
+        playerInfo: {
+            name,
+            gender,
+            class: selectedClass,
+            hp: 100,
+            hpMax: 100,
+            mp: 30,
+            mpMax: 30,
+            stamina: 50,
+            staminaMax: 50,
+            hunger: 100,
+            thirst: 100
+        },
+        weather: "☀️ 맑음", // 초기 날씨
+        turn: "플레이어", // 첫 턴: 플레이어
+        statPoints: 3, // 초기 스탯 포인트
+        stats: {
+            힘: 5,
+            지능: 5,
+            민첩: 5,
+            인내: 5,
+            행운: 5
+        },
+        lastSaved: new Date().toISOString()
+    };
+
+    // 슬롯 번호에 맞춰 gameState 저장
+    const saveKey = `save_slot_${slotNumber}_gameState`;
+    localStorage.setItem(saveKey, JSON.stringify(characterData));
+
+    // 추가적인 데이터 파일 복사 (예: 게임 상태, 인벤토리 등)
+    copyDataFilesToLocalStorage(slotNumber);
+    
+    alert(`슬롯 ${slotNumber}에 저장되었습니다! (${name}, ${gender}, ${selectedClass})`);
+    goBackToTitle();
+}
+async function copyDataFilesToLocalStorage(slotNumber) {
+    const slotPrefix = `save_slot_${slotNumber}/data/`;
+
+    // 어떤 파일들을 복사할지 정의 (직접 하드코딩하거나 filelist.json에서 가져와도 됨)
+    const dataFiles = [
+        'jobs.json',
+        'gameState.json',
+        'timeData.json',
+        'weatherData.json',
+        'worldMap.json',
+        'itemData.json'
+    ];
+
+    for (const fileName of dataFiles) {
+        const response = await fetch(`data/${fileName}`);
+        const json = await response.json();
+        localStorage.setItem(`${slotPrefix}${fileName}`, JSON.stringify(json));
+    }
+
+    console.log(`슬롯 ${slotNumber}에 모든 기본 데이터 복사 완료`);
+}
+// 타이틀 화면 복귀 (UI 리셋용)
+function goBackToTitle() {
+    document.getElementById('character-setup').style.display = 'none';
+    document.getElementById('save-slot-selection').style.display = 'none';
+    document.getElementById('title-screen').style.display = 'flex';
+}
+
+
+// 로컬스토리지에서 JSON 데이터를 불러오는 함수
+function loadJSONFromStorage(key) {
+    try {
+        const data = localStorage.getItem(key);
+        if (!data) {
+            console.warn(`로컬스토리지에서 "${key}" 데이터를 찾을 수 없습니다.`);
+            return null;
+        }
+        return JSON.parse(data);
+    } catch (error) {
+        console.error(`로컬스토리지 "${key}" JSON 파싱 실패:`, error);
         return null;
     }
 }
-
-
-// 게임 데이터 저장하기
-function saveGameData() {
+function saveGameDataToSlot(slotNumber) {
     try {
-        localStorage.setItem('weatherData', JSON.stringify(weatherData));
-        localStorage.setItem('worldMap', JSON.stringify(worldMap));
-        localStorage.setItem('gameState', JSON.stringify(gameState));
-        localStorage.setItem('timeData', JSON.stringify(timePeriods));
-
-        console.log('게임 데이터가 로컬 스토리지에 저장되었습니다.');
+        localStorage.setItem(getSlotKey(slotNumber, 'weatherData'), JSON.stringify(weatherData));
+        localStorage.setItem(getSlotKey(slotNumber, 'worldMap'), JSON.stringify(worldMap));
+        localStorage.setItem(getSlotKey(slotNumber, 'gameState'), JSON.stringify(gameState));
+        localStorage.setItem(getSlotKey(slotNumber, 'timeData'), JSON.stringify(timePeriods));
+        console.log(`게임 데이터가 슬롯 ${slotNumber}에 저장되었습니다.`);
     } catch (error) {
-        console.error('게임 데이터를 저장하는 중 에러 발생:', error);
+        console.error('슬롯 저장 중 오류:', error);
     }
 }
 
-// 인벤토리 저장하기
-function saveInventory() {
+function saveInventoryToSlot(slotNumber) {
     try {
-        localStorage.setItem('inventory', JSON.stringify(inventory));
-        console.log('인벤토리 저장 완료!');
+        localStorage.setItem(getSlotKey(slotNumber, 'inventory'), JSON.stringify(inventory));
+        console.log(`인벤토리가 슬롯 ${slotNumber}에 저장되었습니다.`);
     } catch (error) {
-        console.error('인벤토리를 저장하는 중 에러 발생:', error);
+        console.error('슬롯 인벤토리 저장 오류:', error);
     }
 }
 
@@ -132,7 +308,7 @@ function useItem(itemId) {
         }
 
         // 아이템 사용 후 인벤토리 저장
-        saveInventory();
+        saveInventoryToSlot(slotNumber);
     }
 }
 

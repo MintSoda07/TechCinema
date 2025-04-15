@@ -41,6 +41,98 @@ body {
     flex-direction: column;
 }
 
+.character-setup-panel {
+    background-color: #1c1c1c;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.6);
+    color: #f0f0f0;
+    width: 600px;
+    max-width: 90%;
+    margin: auto;
+}
+
+.character-setup-panel h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.form-row {
+    margin-bottom: 16px;
+}
+
+.form-row label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+}
+
+.form-row input,
+.form-row select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+    background-color: #2e2e2e;
+    color: white;
+}
+
+.class-selection-wrapper {
+    margin-top: 24px;
+}
+
+.class-selection-wrapper h3 {
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.class-selection-grid {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.job-card {
+    width: 160px;
+    height: 220px;
+    background: #2a2a2a;
+    border: 2px solid #555;
+    border-radius: 12px;
+    color: white;
+    padding: 12px;
+    box-sizing: border-box;
+    box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.3s ease;
+}
+
+.job-card:hover {
+    background-color: #3a3a3a;
+}
+
+.job-card.selected {
+    background-color: #558888;
+    border-color: #aad;
+}
+
+.job-card h4 {
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+.job-card p {
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+/* 기타 스타일 */
+.title-ui h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
 /* 배경 이미지 스타일 (선택) */
 .background {
     position: absolute;
@@ -83,6 +175,35 @@ body {
     background-color: #96222259;
 }
 
+/* 게임 시작, 이어하기, 캐릭터 설정 화면에 대한 스타일 */
+#save-slot-selection, #character-setup {
+    display: none;
+}
+
+/* 각 UI 요소들 간의 간격 및 스타일 */
+.title-ui h2 {
+    font-size: 24px;
+    color: #c6bd9f;
+    margin-bottom: 20px;
+}
+
+input, select {
+    display: block;
+    margin: 10px auto;
+    padding: 8px;
+    width: 200px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button[type="submit"] {
+    margin-top: 20px;
+    background-color: #559999;
+}
+
+button[type="submit"]:hover {
+    background-color: #888888;
+}
 
 /* 상단 HUD */
 .top-hud {
