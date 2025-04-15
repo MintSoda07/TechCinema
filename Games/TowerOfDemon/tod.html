@@ -20,12 +20,13 @@
             <button class="title-button" onclick="openSettings()">설정</button>
             <button class="title-button" onclick="exitGame()">종료</button>
         </div>
+        <audio id="bgm" src="bgm/theme/theme_tod.mp3" autoplay loop></audio>
     </div>
     
 <!-- 저장 슬롯 선택 화면 -->
 <div id="save-slot-selection" class="fullscreen" style="display: none;">
     <div class="title-ui">
-        <h2>저장 슬롯 선택</h2>
+        <h2 id="slot-mode-title">저장 슬롯 선택</h2>
         <div id="slot-buttons">
             <!-- 슬롯 버튼들 -->
         </div>
@@ -55,7 +56,30 @@
         </form>
     </div>
 </div>
-
+<div id="loading-overlay" style="display: none;">
+    <div class="loading-text">데이터 불러오는 중...</div>
+</div>
+<!-- 설정창 -->
+<div id="settings-screen" class="fullscreen" style="display: none;">
+    <div class="title-ui">
+        <h2>설정</h2>
+        <div class="setting-group">
+            <label for="bgm-volume">🎵 BGM 볼륨</label>
+            <input type="range" id="bgm-volume" min="0" max="1" step="0.01" />
+        </div>
+        <div class="setting-group">
+            <label for="bgs-volume">🌊 BGS 볼륨</label>
+            <input type="range" id="bgs-volume" min="0" max="1" step="0.01" />
+        </div>
+        <div class="setting-group">
+            <label for="se-volume">🔊 효과음 볼륨</label>
+            <input type="range" id="se-volume" min="0" max="1" step="0.01" />
+        </div>
+        <button class="title-button" onclick="saveSettings()">저장</button>
+        <button class="title-button" onclick="closeSettings()">닫기</button>
+        <p id="save-message" style="color: #ccffcc; margin-top: 10px;"></p>
+    </div>
+</div>
 
     <!-- 상단 HUD -->
     <header class="top-hud">

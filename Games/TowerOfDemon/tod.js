@@ -22,10 +22,15 @@ let inventory = {
         { id: "armor001", quantity: 1 }
     ]
 };
+let PlayingBgm = document.getElementById('bgm');
+let bgs = new Audio('bgm/bgs/forest.mp3');
+let se = new Audio('se/click.mp3');
 
 window.onload = () => {
-    loadJobCards
+    loadJobCards();
+    loadSettings();
 };
+
 function startNewGame() {
     // 타이틀 화면 숨기고 → 저장 슬롯 선택 UI 보여주기
     document.getElementById('title-screen').style.display = 'none';
@@ -38,41 +43,148 @@ function continueGame() {
 }
 
 function openSettings() {
-    alert('설정창 열기');
+    document.getElementById('settings-screen').style.display = 'flex';
+
+    document.getElementById('bgm-volume').value = PlayingBgm.volume;
+    document.getElementById('bgs-volume').value = bgs.volume;
+    document.getElementById('se-volume').value = se.volume;
+
+    // 실시간 반영 이벤트 설정
+    document.getElementById('bgm-volume').oninput = (e) => {
+        bgm.volume = parseFloat(e.target.value);
+    };
+    document.getElementById('bgs-volume').oninput = (e) => {
+        bgs.volume = parseFloat(e.target.value);
+    };
+    document.getElementById('se-volume').onchange = (e) => {
+        se.volume = parseFloat(e.target.value);
+        se.currentTime = 0; // 효과음 미리듣기
+        se.play();
+    };
+}
+
+function closeSettings() {
+    document.getElementById('settings-screen').style.display = 'none';
+    document.getElementById('save-message').textContent = '';
+}
+
+
+function saveSettings() {
+    const bgmVolume = parseFloat(document.getElementById('bgm-volume').value);
+    const bgsVolume = parseFloat(document.getElementById('bgs-volume').value);
+    const seVolume = parseFloat(document.getElementById('se-volume').value);
+
+    bgm.volume = bgmVolume;
+    bgs.volume = bgsVolume;
+    se.volume = seVolume;
+
+    localStorage.setItem('gameSettings', JSON.stringify({ bgmVolume, bgsVolume, seVolume }));
+
+    const message = document.getElementById('save-message');
+    message.textContent = '설정이 저장되었습니다.';
+    setTimeout(() => {
+        message.textContent = '';
+    }, 3000);
+}
+
+// 설정 불러오기 (초기화 시 실행)
+function loadSettings() {
+    const settings = JSON.parse(localStorage.getItem('gameSettings'));
+    if (settings) {
+        bgm.volume = settings.bgmVolume ?? 1;
+        bgs.volume = settings.bgsVolume ?? 1;
+        se.volume = settings.seVolume ?? 1;
+    }
 }
 
 function exitGame() {
     alert('게임 종료 처리 (웹이라면 브라우저 닫기 안내)');
 }
-function startNewGame() {
-    // 타이틀 화면 숨기고 → 저장 슬롯 선택 UI 보여주기
-    document.getElementById('title-screen').style.display = 'none';
-    showSaveSlotSelection('new');
+
+function fadeOutAudio(audio, duration = 2000) {
+    const step = 50;
+    const volumeStep = audio.volume / (duration / step);
+
+    const fade = setInterval(() => {
+        if (audio.volume > volumeStep) {
+            audio.volume -= volumeStep;
+        } else {
+            audio.volume = 0;
+            audio.pause();
+            clearInterval(fade);
+        }
+    }, step);
 }
 
-function continueGame() {
-    document.getElementById('title-screen').style.display = 'none';
-    showSaveSlotSelection('load');
+function switchBGM(newSrc) {
+    if (!bgm.paused && !bgm.ended) {
+        fadeOutAudio(bgm, 1000); // 페이드 아웃
+        setTimeout(() => {
+            playNewBGM(newSrc);  // 페이드 인 포함
+        }, 1000);
+    } else {
+        playNewBGM(newSrc);
+    }
 }
 
-function openSettings() {
-    alert('설정창 열기');
+function playNewBGM(src) {
+    bgm.src = src;
+    bgm.loop = true;
+    fadeInAudio(bgm, 1000); // 1초 동안 페이드 인
 }
 
-function exitGame() {
-    alert('게임 종료 처리 (웹이라면 브라우저 닫기 안내)');
-}
+function fadeInAudio(audio, duration = 2000, targetVolume = 1.0) {
+    const step = 50;
+    const volumeStep = targetVolume / (duration / step);
 
+    audio.volume = 0;
+    audio.muted = true;
+
+    audio.play().then(() => {
+        audio.muted = false;
+        const fade = setInterval(() => {
+            if (audio.volume < targetVolume - volumeStep) {
+                audio.volume += volumeStep;
+            } else {
+                audio.volume = targetVolume;
+                clearInterval(fade);
+            }
+        }, step);
+    }).catch(error => {
+        console.error("오디오 재생 중 오류:", error);
+    });
+}
 // 슬롯 선택 UI 표시
 function showSaveSlotSelection(mode) {
     const saveSlotSelection = document.getElementById('save-slot-selection');
     const slotButtons = document.getElementById('slot-buttons');
+    const slotModeTitle = document.getElementById('slot-mode-title');
+
+    slotModeTitle.textContent = mode === 'new' ? '어느 슬롯에 저장하시겠습니까?' : '어느 슬롯의 데이터를 불러오시겠습니까?';
     slotButtons.innerHTML = '';
 
     for (let i = 1; i <= 3; i++) {
+        const saveKey = `save_slot_${i}/data/gameState`;
+        const saveData = localStorage.getItem(saveKey);
         const slotButton = document.createElement('button');
         slotButton.classList.add('title-button');
-        slotButton.textContent = `슬롯 ${i}`;
+
+        if (saveData) {
+            const data = JSON.parse(saveData);
+            const { name, class: charClass } = data.playerInfo;
+            const { area, spot } = data.place;
+            const lastSaved = new Date(data.lastSaved).toLocaleString();
+
+            slotButton.innerHTML = `
+                <strong>슬롯 ${i}</strong><br>
+                ${name} (${charClass})<br>
+                위치: ${area} - ${spot}<br>
+                저장: ${lastSaved}
+            `;
+        } else {
+            slotButton.textContent = `슬롯 ${i} (빈 슬롯)`;
+        }
+
         slotButton.onclick = () => handleSlotSelection(i, mode);
         slotButtons.appendChild(slotButton);
     }
@@ -82,7 +194,7 @@ function showSaveSlotSelection(mode) {
 
 // 슬롯 클릭 처리
 function handleSlotSelection(slotNumber, mode) {
-    const saveKey = `save_slot_${slotNumber}_gameState`; // 게임 상태를 저장하는 키
+    const saveKey = `save_slot_${slotNumber}/data/gameState`; // 게임 상태를 저장하는 키
     if (mode === 'new') {
         showCharacterSetup(slotNumber);
     } else if (mode === 'load') {
@@ -93,6 +205,9 @@ function handleSlotSelection(slotNumber, mode) {
             alert(`슬롯 ${slotNumber}에서 이어하기.`);
             // 이어하기 후 게임 로딩 로직
             loadGameDataFromSlot(slotNumber, data);
+            const saveSlotSelection = document.getElementById('save-slot-selection');
+            const slotButtons = document.getElementById('slot-buttons');
+            saveSlotSelection.style.display = 'none';
         } else {
             alert(`슬롯 ${slotNumber}에 저장된 데이터가 없습니다.`);
         }
@@ -101,22 +216,36 @@ function handleSlotSelection(slotNumber, mode) {
 let selectedClass = null;
 
 function loadGameDataFromSlot(slotNumber) {
-    try {
-        weatherData = JSON.parse(localStorage.getItem('save_slot_'+slotNumber+'/data/weatherData.json')) || {};
-        worldMap = JSON.parse(localStorage.getItem('save_slot_'+slotNumber+'/data/worldMap.json')) || {};
-        gameState = JSON.parse(localStorage.getItem('save_slot_'+slotNumber+'_gameState.json')) || {};
-        timePeriods = JSON.parse(localStorage.getItem('save_slot_'+slotNumber+'/data/timeData.json'))?.timePeriods || [];
-        inventory = JSON.parse(localStorage.getItem('save_slot_'+slotNumber+'/data/inventory.json')) || { items: [] };
-        itemsDatabase = JSON.parse(localStorage.getItem('itemsDatabase')) || {};
+    const loadingOverlay = document.getElementById('loading-overlay');
+    loadingOverlay.style.display = 'flex';
+    const bgm = document.getElementById('bgm');
 
-        console.log(`슬롯 ${slotNumber}에서 데이터 불러오기 완료!`);
 
-        // 이후 초기화 작업
-        initializeForecast();
-        initializeGameState();
-    } catch (error) {
-        console.error(`슬롯 ${slotNumber}에서 데이터를 불러오는 중 오류 발생:`, error);
+     // BGM 페이드아웃 시작
+    if (bgm && !bgm.paused) {
+        fadeOutAudio(bgm, 2000); // 2초 동안 페이드 아웃
     }
+
+    setTimeout(() => {
+        try {
+            weatherData = JSON.parse(localStorage.getItem('save_slot_' + slotNumber + '/data/weatherData.json')) || {};
+            worldMap = JSON.parse(localStorage.getItem('save_slot_' + slotNumber + '/data/worldMap.json')) || {};
+            gameState = JSON.parse(localStorage.getItem('save_slot_' + slotNumber + '/data/gameState.json')) || {};
+            timePeriods = JSON.parse(localStorage.getItem('save_slot_' + slotNumber + '/data/timeData.json'))?.timePeriods || [];
+            inventory = JSON.parse(localStorage.getItem('save_slot_' + slotNumber + '/data/inventory.json')) || { items: [] };
+            itemsDatabase = JSON.parse(localStorage.getItem('itemsDatabase')) || {};
+
+            console.log(`슬롯 ${slotNumber}에서 데이터 불러오기 완료!`);
+
+            // 이후 초기화 작업
+            initializeForecast();
+            initializeGameState();
+        } catch (error) {
+            console.error(`슬롯 ${slotNumber}에서 데이터를 불러오는 중 오류 발생:`, error);
+        } finally {
+            loadingOverlay.style.display = 'none';
+        }
+    }, 500);
 }
 
 async function loadJobCards() {
@@ -208,7 +337,7 @@ function saveCharacterData(slotNumber) {
     };
 
     // 슬롯 번호에 맞춰 gameState 저장
-    const saveKey = `save_slot_${slotNumber}_gameState`;
+    const saveKey = `save_slot_${slotNumber}/data/gameState`;
     localStorage.setItem(saveKey, JSON.stringify(characterData));
 
     // 추가적인 데이터 파일 복사 (예: 게임 상태, 인벤토리 등)
@@ -360,50 +489,6 @@ function updateLocationDisplay() {
     document.querySelector('.place-detail').textContent = spot;
 }
 
-function switchBGM(newSrc) {
-    const fadeOutDuration = 1000;
-
-    // 기존 BGM 페이드 아웃
-    if (currentBGM) {
-        const prev = currentBGM;
-        const step = 0.05;
-        const fadeOut = setInterval(() => {
-            if (prev.volume > step) {
-                prev.volume -= step;
-            } else {
-                clearInterval(fadeOut);
-                prev.pause();
-                playNewBGM(newSrc);
-            }
-        }, fadeOutDuration * step);
-    } else {
-        playNewBGM(newSrc);
-    }
-}
-
-function playNewBGM(src) {
-    const audio = new Audio(src);
-    audio.loop = true;
-    audio.volume = 0; // 처음에는 음소거 상태로 시작
-    audio.muted = true; // 음소거 상태로 시작
-    audio.play().then(() => {
-        audio.muted = false; // 음소거 해제
-        // 페이드 인 효과
-        const step = 0.05;
-        const fadeIn = setInterval(() => {
-            if (audio.volume < 1 - step) {
-                audio.volume += step;
-            } else {
-                audio.volume = 1;
-                clearInterval(fadeIn);
-            }
-        }, 1000 * step);
-    }).catch(error => {
-        console.error('Error playing audio:', error);
-    });
-
-    currentBGM = audio;
-}
 
 // 시간대 판별 함수
 function getTimePeriod(mins) {

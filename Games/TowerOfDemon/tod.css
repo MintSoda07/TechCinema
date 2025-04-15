@@ -132,7 +132,22 @@ body {
     font-size: 20px;
     margin-bottom: 10px;
 }
+#loading-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
 
+.loading-text {
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+}
 /* 배경 이미지 스타일 (선택) */
 .background {
     position: absolute;
@@ -141,8 +156,11 @@ body {
     object-fit: cover;
     opacity: 0.5;
     z-index: -1;
+    transition: all 2s ease;
 }
-
+.background.darken-bg {
+    opacity: 0.7;
+}
 /* 타이틀 UI 영역 */
 .title-ui {
     text-align: center;
@@ -158,7 +176,7 @@ body {
 /* 버튼 공통 스타일 (deck-button 느낌 반영) */
 .title-button {
     display: block;
-    width: 220px;
+    width: 380px;
     padding: 16px 0;
     margin: 12px auto;
     background-color: #55373764;
@@ -178,6 +196,19 @@ body {
 /* 게임 시작, 이어하기, 캐릭터 설정 화면에 대한 스타일 */
 #save-slot-selection, #character-setup {
     display: none;
+}
+
+.setting-group {
+    margin: 10px 0;
+    text-align: left;
+}
+.setting-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+.setting-group input[type=range] {
+    width: 100%;
 }
 
 /* 각 UI 요소들 간의 간격 및 스타일 */
