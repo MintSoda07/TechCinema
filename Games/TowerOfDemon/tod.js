@@ -26,9 +26,6 @@ let inventory = {
 window.onload = () => {
     loadJobCards
 };
-function getSlotKey(slotNumber, dataName) {
-    return `save_slot_${slotNumber}_gameState`;
-}
 function startNewGame() {
     // 타이틀 화면 숨기고 → 저장 슬롯 선택 UI 보여주기
     document.getElementById('title-screen').style.display = 'none';
@@ -105,11 +102,11 @@ let selectedClass = null;
 
 function loadGameDataFromSlot(slotNumber) {
     try {
-        weatherData = JSON.parse(localStorage.getItem(getSlotKey(slotNumber, 'weatherData'))) || {};
-        worldMap = JSON.parse(localStorage.getItem(getSlotKey(slotNumber, 'worldMap'))) || {};
-        gameState = JSON.parse(localStorage.getItem(getSlotKey(slotNumber, 'gameState'))) || {};
-        timePeriods = JSON.parse(localStorage.getItem(getSlotKey(slotNumber, 'timeData')))?.timePeriods || [];
-        inventory = JSON.parse(localStorage.getItem(getSlotKey(slotNumber, 'inventory'))) || { items: [] };
+        weatherData = JSON.parse(localStorage.getItem('save_slot_'+slotNumber+'/data/weatherData.json')) || {};
+        worldMap = JSON.parse(localStorage.getItem('save_slot_'+slotNumber+'/data/worldMap.json')) || {};
+        gameState = JSON.parse(localStorage.getItem('save_slot_'+slotNumber+'_gameState.json')) || {};
+        timePeriods = JSON.parse(localStorage.getItem('save_slot_'+slotNumber+'/data/timeData.json'))?.timePeriods || [];
+        inventory = JSON.parse(localStorage.getItem('save_slot_'+slotNumber+'/data/inventory.json')) || { items: [] };
         itemsDatabase = JSON.parse(localStorage.getItem('itemsDatabase')) || {};
 
         console.log(`슬롯 ${slotNumber}에서 데이터 불러오기 완료!`);
@@ -480,6 +477,7 @@ const regions = {};
 // 각 지역별 날씨 초기화
 function initializeForecast() {
     Object.keys(worldMap).forEach(region => {
+        console.log('지역: '+worldMap)
         worldMap[region].weatherForecast = Array.from({ length: 7 }, () => generateWeather(region));
         const regionData = worldMap[region];
 
@@ -1163,8 +1161,8 @@ function initializeGameState() {
     // 게임 상태 UI 업데이트
     document.querySelector('.level').textContent = `Lv. ${gameState.level}`;
     document.querySelector('.exp-fill').style.width = `${(gameState.exp / gameState.expMax) * 100}%`;
-    document.querySelector('.place-name').textContent = gameState.place.name;
-    document.querySelector('.place-detail').textContent = gameState.place.detail;
+    document.querySelector('.place-name').textContent = gameState.location.area;
+    document.querySelector('.place-detail').textContent = gameState.location.spot;
     document.querySelector('.gold').textContent = `💰 ${gameState.gold}G`;
     updateLocationDisplay(); // 위치 정보 갱신
     const info = document.querySelector('.player-info');
