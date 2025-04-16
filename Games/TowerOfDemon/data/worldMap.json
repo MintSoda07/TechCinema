@@ -49,6 +49,11 @@
                         "isSafe": true,
                         "connectedRegions": [
                             "ERTS_PLZ"
+                        ],
+                        "acts":[
+                            "guild_quest",
+                            "guild_talk",
+                            "guild_leave"
                         ]
                     },
                     {

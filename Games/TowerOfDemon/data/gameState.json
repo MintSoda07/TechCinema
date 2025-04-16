@@ -7,6 +7,11 @@
         "area": "에렌투스",
         "spot": "모험가 길드"
     },
+    "placeCode": {
+        "region": "ERDIA_PLAIN",
+        "area": "ERTS_VILLAGE",
+        "spot": "ERTS_GLD"
+    },
     "gold": 0,
     "playerInfo": {
         "name": "???",
@@ -29,5 +34,6 @@
         "인내": 5,
         "행운": 5
     },
+    "deck":[],
     "lastSaved":null
 }

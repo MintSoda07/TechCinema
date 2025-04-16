@@ -14,7 +14,8 @@ const cancelSound = new Audio('audio/cancel.wav');
 //window.addEventListener('DOMContentLoaded', loadJobCards);
 
 // 전역 변수 선언
-let weatherData, worldMap, gameState, timePeriods;
+let weatherData, worldMap, gameState, timePeriods, enemyData, cardData;
+let handCardData;
 let inventory = {
     items: [
         { id: "sword001", quantity: 1 },
@@ -164,7 +165,7 @@ function showSaveSlotSelection(mode) {
     slotButtons.innerHTML = '';
 
     for (let i = 1; i <= 3; i++) {
-        const saveKey = `save_slot_${i}/data/gameState`;
+        const saveKey = `save_slot_${i}/data/gameState.json`;
         const saveData = localStorage.getItem(saveKey);
         const slotButton = document.createElement('button');
         slotButton.classList.add('title-button');
@@ -177,24 +178,53 @@ function showSaveSlotSelection(mode) {
 
             slotButton.innerHTML = `
                 <strong>슬롯 ${i}</strong><br>
-                ${name} (${charClass})<br>
-                위치: ${area} - ${spot}<br>
-                저장: ${lastSaved}
+                <div class="save-container">
+                    <div class="save-header">
+                        <span id="save-name">${name}</span>
+                        <span id="save-job">${charClass}</span>
+                    </div>
+                    <hr>
+                    <div class="save-details">
+                    <span id="save-location">${area} - ${spot}</span><br>
+                    <span id="save-time">${lastSaved}</span>
+                    </div>
+                </div>
             `;
+
+            // 모드별 onclick 처리
+            if (mode === 'load') {
+                slotButton.onclick = () => handleSlotSelection(i, mode);
+            } else if (mode === 'new') {
+                slotButton.onclick = () => {
+                    const confirmed = confirm(`슬롯 ${i}에는 이미 저장된 데이터가 있습니다.\n덮어쓰시겠습니까?`);
+                    if (confirmed) {
+                        handleSlotSelection(i, mode);
+                    }
+                };
+            }
         } else {
             slotButton.textContent = `슬롯 ${i} (빈 슬롯)`;
+
+            if (mode === 'load') {
+                slotButton.disabled = true;
+                slotButton.classList.add('slot-disabled');
+            } else {
+                // 빈 슬롯이므로 바로 저장
+                slotButton.onclick = () => handleSlotSelection(i, mode);
+            }
         }
 
-        slotButton.onclick = () => handleSlotSelection(i, mode);
         slotButtons.appendChild(slotButton);
     }
 
     saveSlotSelection.style.display = 'flex';
 }
 
+
+
 // 슬롯 클릭 처리
 function handleSlotSelection(slotNumber, mode) {
-    const saveKey = `save_slot_${slotNumber}/data/gameState`; // 게임 상태를 저장하는 키
+    const saveKey = `save_slot_${slotNumber}/data/gameState.json`; // 게임 상태를 저장하는 키
     if (mode === 'new') {
         showCharacterSetup(slotNumber);
     } else if (mode === 'load') {
@@ -202,7 +232,6 @@ function handleSlotSelection(slotNumber, mode) {
 
         if (savedData) {
             const data = JSON.parse(savedData);
-            alert(`슬롯 ${slotNumber}에서 이어하기.`);
             // 이어하기 후 게임 로딩 로직
             loadGameDataFromSlot(slotNumber, data);
             const saveSlotSelection = document.getElementById('save-slot-selection');
@@ -220,33 +249,67 @@ function loadGameDataFromSlot(slotNumber) {
     loadingOverlay.style.display = 'flex';
     const bgm = document.getElementById('bgm');
 
-
-     // BGM 페이드아웃 시작
+    // BGM 페이드아웃 시작
     if (bgm && !bgm.paused) {
         fadeOutAudio(bgm, 2000); // 2초 동안 페이드 아웃
     }
 
     setTimeout(() => {
         try {
-            weatherData = JSON.parse(localStorage.getItem('save_slot_' + slotNumber + '/data/weatherData.json')) || {};
-            worldMap = JSON.parse(localStorage.getItem('save_slot_' + slotNumber + '/data/worldMap.json')) || {};
-            gameState = JSON.parse(localStorage.getItem('save_slot_' + slotNumber + '/data/gameState.json')) || {};
-            timePeriods = JSON.parse(localStorage.getItem('save_slot_' + slotNumber + '/data/timeData.json'))?.timePeriods || [];
-            inventory = JSON.parse(localStorage.getItem('save_slot_' + slotNumber + '/data/inventory.json')) || { items: [] };
-            itemsDatabase = JSON.parse(localStorage.getItem('itemsDatabase')) || {};
+            const weatherRaw = localStorage.getItem(`save_slot_${slotNumber}/data/weatherData.json`);
+            const worldRaw = localStorage.getItem(`save_slot_${slotNumber}/data/worldMap.json`);
+            const stateRaw = localStorage.getItem(`save_slot_${slotNumber}/data/gameState.json`);
+            const timeRaw = localStorage.getItem(`save_slot_${slotNumber}/data/timeData.json`);
+            const inventoryRaw = localStorage.getItem(`save_slot_${slotNumber}/data/inventory.json`);
+            const itemsRaw = localStorage.getItem(`save_slot_${slotNumber}/data/itemData.json`);
+            const enemyRaw = localStorage.getItem(`save_slot_${slotNumber}/data/enemyData.json`);
+            const cardRaw = localStorage.getItem(`save_slot_${slotNumber}/data/cardData.json`);
 
-            console.log(`슬롯 ${slotNumber}에서 데이터 불러오기 완료!`);
+            if (
+                weatherRaw && worldRaw && stateRaw &&
+                timeRaw && inventoryRaw && itemsRaw &&
+                enemyRaw && cardRaw
+            ) {
+                // 파싱 및 데이터 적용
+                weatherData = JSON.parse(weatherRaw);
+                worldMap = JSON.parse(worldRaw);
+                gameState = JSON.parse(stateRaw);
+                timePeriods = JSON.parse(timeRaw)?.timePeriods || [];
+                inventory = JSON.parse(inventoryRaw);
+                itemsDatabase = JSON.parse(itemsRaw);
+                enemyData = JSON.parse(enemyRaw);
+                cardData = JSON.parse(cardRaw);
 
-            // 이후 초기화 작업
-            initializeForecast();
-            initializeGameState();
+                console.log(`슬롯 ${slotNumber}에서 데이터 불러오기 완료!`);
+
+                // 데이터 로드 완료 후 초기화(
+                initializeForecast();
+                initializeGameState();
+                moveToLocation(gameState.placeCode.region,gameState.placeCode.area,gameState.placeCode.spot);
+            } else {
+                const missingKeys = [];
+                if (!weatherRaw) missingKeys.push('weatherData.json');
+                if (!worldRaw) missingKeys.push('worldMap.json');
+                if (!stateRaw) missingKeys.push('gameState.json');
+                if (!timeRaw) missingKeys.push('timeData.json');
+                if (!inventoryRaw) missingKeys.push('inventory.json');
+                if (!itemsRaw) missingKeys.push('itemData.json');
+                if (!enemyRaw) missingKeys.push('enemyData.json');
+                if (!cardRaw) missingKeys.push('cardData.json');
+
+                console.warn("다음 데이터가 누락되었습니다:", missingKeys);
+                alert("일부 저장 데이터가 누락되어 게임을 불러올 수 없습니다:\n" + missingKeys.join(', '));
+            }
+
         } catch (error) {
             console.error(`슬롯 ${slotNumber}에서 데이터를 불러오는 중 오류 발생:`, error);
+            alert("데이터 로딩 중 오류가 발생했습니다.");
         } finally {
             loadingOverlay.style.display = 'none';
         }
-    }, 500);
+    }, 1500);
 }
+
 
 async function loadJobCards() {
     const response = await fetch('data/jobs.json');
@@ -296,10 +359,13 @@ function showCharacterSetup(slotNumber) {
 }
 
 // 캐릭터 데이터를 해당 슬롯에 저장
-function saveCharacterData(slotNumber) {
+async function saveCharacterData(slotNumber) {
     const name = document.getElementById('character-name').value;
     const gender = document.getElementById('character-gender').value;
-
+    // 추가적인 데이터 파일 복사 (예: 게임 상태, 인벤토리 등)
+    await copyDataFilesToLocalStorage(slotNumber);
+    let stats = [0, 0, 0, 0, 0]; let deck = [];
+    loadJobData(selectedClass);
     const characterData = {
         level: 1,
         exp: 0,
@@ -309,10 +375,15 @@ function saveCharacterData(slotNumber) {
             area: "에렌투스",        // 기본 지역 세부
             spot: "모험가 길드"      // 기본 장소
         },
+        placeCode: {
+            region: "ERDIA_PLAIN",
+            area: "ERTS_VILLAGE", 
+            spot: "ERTS_GLD"
+        },
         gold: 0,
         playerInfo: {
-            name,
-            gender,
+            name: name,
+            gender: gender,
             class: selectedClass,
             hp: 100,
             hpMax: 100,
@@ -327,25 +398,51 @@ function saveCharacterData(slotNumber) {
         turn: "플레이어", // 첫 턴: 플레이어
         statPoints: 3, // 초기 스탯 포인트
         stats: {
-            힘: 5,
-            지능: 5,
-            민첩: 5,
-            인내: 5,
-            행운: 5
+            힘: stats[0],
+            지능: stats[1],
+            민첩: stats[2],
+            인내: stats[3],
+            행운: stats[4],
         },
+        deck: deck,
         lastSaved: new Date().toISOString()
     };
 
     // 슬롯 번호에 맞춰 gameState 저장
-    const saveKey = `save_slot_${slotNumber}/data/gameState`;
-    localStorage.setItem(saveKey, JSON.stringify(characterData));
 
-    // 추가적인 데이터 파일 복사 (예: 게임 상태, 인벤토리 등)
-    copyDataFilesToLocalStorage(slotNumber);
-    
-    alert(`슬롯 ${slotNumber}에 저장되었습니다! (${name}, ${gender}, ${selectedClass})`);
-    goBackToTitle();
+    handCardData = deck;
+
+    const saveKey = `save_slot_${slotNumber}/data/gameState.json`;
+    localStorage.setItem(saveKey, JSON.stringify(characterData));
+    localStorage.setItem('save_slot_' + slotNumber + '/data/inventory.json', JSON.stringify("{}"));
+
+
+    console.log(`슬롯 ${slotNumber}에 저장되었습니다! (${name}, ${gender}, ${selectedClass})`);
+    loadGameDataFromSlot(slotNumber);
+
+    // 특정 직업의 스탯과 덱을 불러오는 함수
+    async function loadJobData(jobId) {
+        try {
+            const response = await fetch('data/jobs.json');
+            const jobs = await response.json();
+
+            const selectedJob = jobs.find(job => job.id === jobId);
+
+            if (selectedJob) {
+                stats = selectedJob.stats.slice(); // 스탯 배열 복사
+                deck = selectedJob.deck.slice();   // 덱 배열 복사
+                console.log(`직업 '${jobId}'의 스탯:`, stats);
+                console.log(`직업 '${jobId}'의 덱:`, deck);
+            } else {
+                console.warn(`직업 ID '${jobId}'를 찾을 수 없습니다.`);
+            }
+        } catch (error) {
+            console.error('직업 데이터를 불러오는 중 오류 발생:', error);
+        }
+    }
 }
+
+
 async function copyDataFilesToLocalStorage(slotNumber) {
     const slotPrefix = `save_slot_${slotNumber}/data/`;
 
@@ -356,7 +453,9 @@ async function copyDataFilesToLocalStorage(slotNumber) {
         'timeData.json',
         'weatherData.json',
         'worldMap.json',
-        'itemData.json'
+        'itemData.json',
+        'cardData.json',
+        'enemyData.json'
     ];
 
     for (const fileName of dataFiles) {
@@ -395,6 +494,10 @@ function saveGameDataToSlot(slotNumber) {
         localStorage.setItem(getSlotKey(slotNumber, 'worldMap'), JSON.stringify(worldMap));
         localStorage.setItem(getSlotKey(slotNumber, 'gameState'), JSON.stringify(gameState));
         localStorage.setItem(getSlotKey(slotNumber, 'timeData'), JSON.stringify(timePeriods));
+        localStorage.setItem(getSlotKey(slotNumber, 'cardData'), JSON.stringify(cardData));
+        localStorage.setItem(getSlotKey(slotNumber, 'enemyData'), JSON.stringify(enemyData));
+        localStorage.setItem(getSlotKey(slotNumber, 'jobs'), JSON.stringify(jobs));
+        localStorage.setItem(getSlotKey(slotNumber, 'itemData'), JSON.stringify(itemsDatabase));
         console.log(`게임 데이터가 슬롯 ${slotNumber}에 저장되었습니다.`);
     } catch (error) {
         console.error('슬롯 저장 중 오류:', error);
@@ -432,9 +535,6 @@ function useItem(itemId) {
                 inventory.items = inventory.items.filter(i => i.id !== itemId);
             }
         }
-
-        // 아이템 사용 후 인벤토리 저장
-        saveInventoryToSlot(slotNumber);
     }
 }
 
@@ -452,36 +552,71 @@ let isWaiting = false;
 // 배경음악 제어를 위한 오디오 객체
 let currentBGM = null;
 
+function moveToLocation(regionCode, areaCode, spotCode) {
+    // region 찾기
+    const regionEntry = Object.entries(worldMap).find(
+        ([_, data]) => data.regionCode === regionCode
+    );
+    if (!regionEntry) {
+        console.warn("지역(region)을 찾을 수 없습니다:", regionCode);
+        return;
+    }
+    const [regionName, regionData] = regionEntry;
 
-function moveToLocation(region, area, spot) {
-    const regionData = worldMap[region];
-    const areaData = regionData?.[area];
-    const isValid = areaData && areaData.spots.includes(spot);
+    // area 찾기
+    const areaEntry = Object.entries(regionData.regions).find(
+        ([_, data]) => data.areaCode === areaCode
+    );
+    if (!areaEntry) {
+        console.warn("지역(area)을 찾을 수 없습니다:", areaCode);
+        return;
+    }
+    const [areaName, areaData] = areaEntry;
 
-    if (!isValid) {
-        console.warn("존재하지 않는 지역입니다.");
+    // spot 찾기
+    const spotData = areaData.spots.find(spot => spot.spotCode === spotCode);
+    if (!spotData) {
+        console.warn("스팟(spot)을 찾을 수 없습니다:", spotCode);
         return;
     }
 
-    // 위치 저장
-    gameState.location = { region, area, spot };
+    // ✅ 위치 저장
+    gameState.location = {
+        names: [regionName, areaName, spotData.name],
+        codes: [regionCode, areaCode, spotCode]
+    };
 
     // 날씨 갱신
     updateWeather();
 
-    // BGM 페이드 전환
-    const bgmSrc = areaData.bgm;
-    if (bgmSrc) switchBGM(bgmSrc);
+    // 배경음악
+    if (spotData.bgm) {
+        switchBGM(spotData.bgm);
+    }
+    console.log(cardData);  
+    // 행동 카드 처리
+if (spotData.acts?.length) {
+    // 모든 카드 묶음을 하나의 배열로 펼치기
+    const allCards = Object.values(cardData).flat();
 
-    // UI 갱신
-    updateLocationDisplay();
+    const actionCards = spotData.acts
+        .map(actId => allCards.find(card => card.id === actId))
+        .filter(Boolean); // undefined 제거
 
-    // 기타 시스템
-    updateGameStateUI();
-    renderHandCards();
-
-    console.log(`이동 완료: ${region} > ${area} > ${spot}`);
+    if (actionCards.length > 0) {
+        console.log("손에 생성된 카드 묶음 데이터_",actionCards);
+        handCardData = actionCards;
+        renderHandCards();
+    }
 }
+
+    updateLocationDisplay();
+    updateGameStateUI();
+
+    console.log(`이동 완료: ${regionName} > ${areaName} > ${spotData.name}`);
+}
+
+
 // 위치 표시 UI 갱신
 function updateLocationDisplay() {
     const { region, area, spot } = gameState.location;
@@ -562,7 +697,7 @@ const regions = {};
 // 각 지역별 날씨 초기화
 function initializeForecast() {
     Object.keys(worldMap).forEach(region => {
-        console.log('지역: '+worldMap)
+        console.log('지역: ' + worldMap)
         worldMap[region].weatherForecast = Array.from({ length: 7 }, () => generateWeather(region));
         const regionData = worldMap[region];
 
@@ -616,7 +751,7 @@ function updateTimeDisplay() {
 function endTurn() {
     isWaiting = true;
     endTurnButton.classList.add('disabled');
-    endTurnButton.textContent = '⏳ 대기 중...';
+    endTurnButton.textContent = '대기 중...';
 
     currentGameTime += 10;
     if (currentGameTime >= 1440) {
@@ -648,149 +783,12 @@ function endTurn() {
     setTimeout(() => {
         isWaiting = false;
         endTurnButton.classList.remove('disabled');
-        endTurnButton.textContent = '⏭️ 턴 넘기기';
-        document.querySelector('.turn-info').textContent = '턴: 플레이어';
+        endTurnButton.textContent = '⏭턴 넘기기';
+        document.querySelector('.turn-info').textContent = '플레이어의 턴';
         renderHandCards();
     }, 1000);
 }
 
-// 처음에 시작할 카드 내용이랑 카드 변수가 있음
-let cardData = [
-    {
-        name: '게시판 확인',
-        effect: '의뢰 확인',
-        description: '현재 접수 가능한 의뢰와 진행 중인 임무를 확인합니다.',
-        image: 'icons/board.png',
-        undiscardable: true,
-        type: '행동',
-        cost: 0,
-        usable: true,
-        disposialAfterLeave: true,
-        oneTimeUse: true,
-        id: 'guild_quest',
-        tags: ['길드', '행동', '게시판 확인']
-    },
-    {
-        name: '대화하기',
-        effect: '길드원 교류',
-        description: '길드 마스터나 다른 길드원들과 대화를 나눕니다.',
-        image: 'icons/chat.png',
-        undiscardable: true,
-        type: '행동',
-        cost: 0,
-        usable: true,
-        disposialAfterLeave: true,
-        oneTimeUse: false,
-        id: 'guild_talk',
-        tags: ['길드', '행동', '대화하기']
-    },
-    {
-        name: '길드 나가기',
-        effect: '마을 이동',
-        description: '길드를 나와 마을로 돌아갑니다.',
-        image: 'icons/doorOut.png',
-        undiscardable: true,
-        type: '행동',
-        cost: 0,
-        usable: true,
-        disposialAfterLeave: true,
-        oneTimeUse: false,
-        id: 'guild_leave',
-        tags: ['길드', '행동', '마을이동']
-    }
-];
-
-
-let guild_set = [
-    {
-        name: '게시판 확인',
-        effect: '의뢰 확인',
-        description: '현재 접수 가능한 의뢰와 진행 중인 임무를 확인합니다.',
-        image: 'icons/board.png',
-        undiscardable: true,
-        type: '행동',
-        cost: 0,
-        usable: true,
-        disposialAfterLeave: true,
-        oneTimeUse: true,
-        id: 'guild_quest',
-        tags: ['길드', '행동', '게시판 확인']
-    },
-    {
-        name: '대화하기',
-        effect: '길드원 교류',
-        description: '길드 마스터나 다른 길드원들과 대화를 나눕니다.',
-        image: 'icons/chat.png',
-        undiscardable: true,
-        type: '행동',
-        cost: 0,
-        usable: true,
-        disposialAfterLeave: true,
-        oneTimeUse: false,
-        id: 'guild_talk',
-        tags: ['길드', '행동', '대화하기']
-    },
-    {
-        name: '길드 나가기',
-        effect: '마을 이동',
-        description: '길드를 나와 마을로 돌아갑니다.',
-        image: 'icons/doorOut.png',
-        undiscardable: true,
-        type: '행동',
-        cost: 0,
-        usable: true,
-        disposialAfterLeave: true,
-        oneTimeUse: false,
-        id: 'guild_leave',
-        tags: ['길드', '행동', '마을이동']
-    }
-];
-
-
-let guild_quest_set = [
-    {
-        name: '슬라임 소탕',
-        effect: '퀘스트 수락',
-        description: '요즘 슬라임의 수가 너무 많소. 세 놈만 잡으면, 두둑히 보수하겠소.',
-        image: 'icons/quest.png',
-        undiscardable: true,
-        type: '소탕 퀘스트',
-        cost: 0,
-        usable: true,
-        disposialAfterLeave: true,
-        oneTimeUse: true,
-        id: 'quest1',
-        tags: ['퀘스트', '초보자', '전투', '소탕']
-    },
-    {
-        name: '구리 원석이 필요하네.',
-        effect: '퀘스트 수락',
-        description: '구리 원석을 4개 구해서 대장간으로 가져와 주게나. 보수는.. 200G 즈음 주겠네.',
-        image: 'icons/quest.png',
-        undiscardable: true,
-        type: '수집 퀘스트',
-        cost: 0,
-        usable: true,
-        disposialAfterLeave: true,
-        oneTimeUse: true,
-        id: 'quest2',
-        tags: ['퀘스트', '초보자', '비전투', '수집']
-    },
-    {
-        name: '돌아가기',
-        effect: '마을로 돌아가기',
-        description: '퀘스트를 마친 후 마을로 돌아갑니다.',
-        image: 'icons/doorOut.png',
-        undiscardable: true,
-        type: '행동',
-        cost: 0,
-        usable: false,
-        disposialAfterLeave: true,
-        oneTimeUse: false,
-        id: 'back_to_town',
-        tags: ['길드', '행동', '돌아가기']
-    }
-];
 // 좌측 패널에 대한 내용이 있음
 // 패널 열기/닫기
 function togglePanel() {
@@ -823,6 +821,7 @@ function showTab(tab) {
         const pointInfo = document.createElement('p');
         pointInfo.textContent = `남은 스탯 포인트: ${gameState.statPoints}`;
         statContainer.appendChild(pointInfo);
+        statContainer.appendChild(document.createElement('hr'));
 
         for (const statName in gameState.stats) {
             const statRow = document.createElement('div');
@@ -866,7 +865,7 @@ function showTab(tab) {
 // 카드에 대한 작업이 있음
 // 카드 상세보기
 function showCardDetail(card) {
-    alert(`🔍 ${card.name}\n${card.effect}\n\n${card.description}`);
+    alert(` ${card.name}\n${card.effect}\n\n${card.description}`);
 }
 // 카드 DOM 생성 함수
 function createCard(card, index, total) {
@@ -883,7 +882,7 @@ function createCard(card, index, total) {
         <div class='card-description'>${card.description}</div>
     `;
     document.body.appendChild(el);
-    el.cardData = card;
+    el.handCardData = card;
     const cardWidth = 180;
 
     // 기본 간격
@@ -937,15 +936,15 @@ function createCard(card, index, total) {
 // 초기 카드 배치 함수 겸 카드 렌더링 (새로고침)
 function renderHandCards() {
     document.querySelectorAll('.card').forEach(card => card.remove());
-    cardData.forEach((card, i) => createCard(card, i, cardData.length));
+    handCardData.forEach((card, i) => createCard(card, i, handCardData.length));
 }
 
 
 function addCard(card) {
     const deck = document.getElementById('deck');
     const deckRect = deck?.getBoundingClientRect() || { left: window.innerWidth / 2, top: window.innerHeight };
-    const total = cardData.length + 1;
-    const index = cardData.length;
+    const total = handCardData.length + 1;
+    const index = handCardData.length;
 
     const el = document.createElement('div');
     el.className = 'card';
@@ -960,7 +959,7 @@ function addCard(card) {
         <div class='card-description'>${card.description}</div>
     `;
     document.body.appendChild(el);
-    el.cardData = card;
+    el.handCardData = card;
 
     // 초기 위치: 덱 위치
     el.style.position = 'absolute';
@@ -1021,7 +1020,7 @@ function addCard(card) {
     });
 
     // 카드 데이터에 추가
-    cardData.push(card);
+    handCardData.push(card);
 }
 
 
@@ -1031,9 +1030,9 @@ function enableDrag(original, card) {
         e.preventDefault();
         original.style.transition = '';
 
-        const index = cardData.indexOf(card);
+        const index = handCardData.indexOf(card);
         if (index === -1) return;
-        cardData.splice(index, 1);
+        handCardData.splice(index, 1);
         renderHandCards();
 
         const clone = original.cloneNode(true);
@@ -1101,7 +1100,7 @@ function enableDrag(original, card) {
                 // 버릴 수 없는 카드면 그냥 복구
                 if (card.undiscardable) {
                     showUndiscardableMessage();
-                    cardData.splice(index, 0, card);
+                    handCardData.splice(index, 0, card);
                     clone.remove();
                     renderHandCards();
                     discardArea.classList.remove('active');
@@ -1138,14 +1137,14 @@ function enableDrag(original, card) {
                     clone.remove();
                     return
                 }
-                cardData.splice(index, 0, card);
+                handCardData.splice(index, 0, card);
                 clone.remove();
                 renderHandCards();
                 return;
 
             }
             // 카드 복원
-            cardData.splice(index, 0, card);
+            handCardData.splice(index, 0, card);
             clone.remove();
             renderHandCards();
             dropSound.currentTime = 0;
@@ -1171,7 +1170,7 @@ function useCard(card) {
     switch (card.id) {
         case 'guild_quest':
             console.log('퀘스트를 확인합니다!');
-            console.log(cardData);
+            console.log(handCardData);
             openQuestTab();
             // 여기에 퀘스트 확인 처리
             break;
@@ -1194,7 +1193,7 @@ function useCard(card) {
 
 function openQuestTab() {
     // 기존 카드 제거
-    returnAllCardsToDeck(cardData.length);
+    returnAllCardsToDeck(handCardData.length);
 
     setTimeout(() => { addMultipleCards(guild_quest_set) }, 500);
 
@@ -1202,13 +1201,11 @@ function openQuestTab() {
 
 }
 
-
 function addMultipleCards(cardsArray) {
-
     cardsArray.forEach((card, index) => {
         setTimeout(() => {
             addCard(card, index, cardsArray.length);
-        }, index * 500); // 한 장씩 슥슥 추가되는 느낌
+        }, index * 500);
     });
 }
 function returnAllCardsToDeck(value) {
@@ -1225,7 +1222,7 @@ function returnAllCardsToDeck(value) {
         card.style.transform = `translate(${dx}px, ${dy}px) scale(0.2) rotate(-30deg)`;
         card.style.opacity = '0';
 
-        setTimeout(cardData.splice(0, value));
+        setTimeout(handCardData.splice(0, value));
     });
 }
 
@@ -1248,10 +1245,11 @@ function initializeGameState() {
     document.querySelector('.exp-fill').style.width = `${(gameState.exp / gameState.expMax) * 100}%`;
     document.querySelector('.place-name').textContent = gameState.location.area;
     document.querySelector('.place-detail').textContent = gameState.location.spot;
-    document.querySelector('.gold').textContent = `💰 ${gameState.gold}G`;
+    document.querySelector('.gold').textContent = ` ${gameState.gold}G`;
     updateLocationDisplay(); // 위치 정보 갱신
     const info = document.querySelector('.player-info');
     info.querySelector('h3').textContent = gameState.playerInfo.name;
+    console.log(gameState.playerInfo.name);
     const lines = [
         `레벨 ${gameState.level} | 경험치 ${gameState.exp}/${gameState.expMax}`,
         `HP: ${gameState.playerInfo.hp} / ${gameState.playerInfo.hpMax}`,
@@ -1265,9 +1263,7 @@ function initializeGameState() {
     document.getElementById('hpValue').textContent = gameState.playerInfo.hp;
 
     showTab('status');
-    document.querySelector('.event-display').innerHTML = '<p>당신은 시작의 마을, 에렌투스의 모험가 길드에 들어갑니다. 솥에서  풍기는 고소한 고기 스튜 냄새와 맥주 냄새가 가득합니다.<br> 주변에는 퀘스트 보드와 모험가들이 있습니다..</p>';
-
-    renderHandCards();
+    document.querySelector('.event-display').innerHTML = '<p>당신은 시작의 마을, 에렌투스의 모험가 길드에 들어갑니다. 솥에서 풍기는 고소한 고기 스튜 냄새와 맥주 냄새가 가득합니다.<br> 주변에는 퀘스트 보드와 모험가들이 있습니다..</p>';
 
     // 턴 종료 버튼 연결
     endTurnButton.addEventListener('click', () => {

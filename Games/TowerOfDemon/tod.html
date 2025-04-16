@@ -64,15 +64,15 @@
     <div class="title-ui">
         <h2>설정</h2>
         <div class="setting-group">
-            <label for="bgm-volume">🎵 BGM 볼륨</label>
+            <label for="bgm-volume"> BGM 볼륨</label>
             <input type="range" id="bgm-volume" min="0" max="1" step="0.01" />
         </div>
         <div class="setting-group">
-            <label for="bgs-volume">🌊 BGS 볼륨</label>
+            <label for="bgs-volume"> BGS 볼륨</label>
             <input type="range" id="bgs-volume" min="0" max="1" step="0.01" />
         </div>
         <div class="setting-group">
-            <label for="se-volume">🔊 효과음 볼륨</label>
+            <label for="se-volume"> 효과음 볼륨</label>
             <input type="range" id="se-volume" min="0" max="1" step="0.01" />
         </div>
         <button class="title-button" onclick="saveSettings()">저장</button>
@@ -90,11 +90,11 @@
             </div>
         </div>
         <div class="place-info">
-            <div class="place-name">디버깅 헬</div>
-            <div class="place-detail">버그가 가득한 공간</div>
+            <div class="place-name">불러오기</div>
+            <div class="place-detail">데이터를 불러오는 중입니다...</div>
         </div>
         <div class="right-info">
-            <div class="gold">💰 HELP ME GG</div>
+            <div class="gold"></div>
         </div>
     </header>
 
@@ -129,17 +129,17 @@
     <!-- 중앙 전투/이벤트 영역 -->
     <main class="main-stage">
         <div class="event-display">
-            <p>버그 발생..! 오류가 나타났습니다..</p>
+            <p>불러오는 중. . . </p>
         </div>
     </main>
     <div class="hp-ui">
-        <span id="ui-name">HP</span><span id="hpValue">3</span>
+        <span id="ui-name">HP</span><span id="hpValue"></span>
         <div class="hp-bar">
             <div class="hp-fill"></div>
         </div>
     </div>
     <div class="mana-ui">
-        <span id="ui-name">MP</span><span id="manaValue">3</span>
+        <span id="ui-name">MP</span><span id="manaValue"></span>
         <div class="mp-bar">
             <div class="mp-fill"></div>
         </div>
@@ -148,22 +148,22 @@
     <div class="card-use-rect cardUseRect"></div>
     <!-- 하단 카드 덱 -->
     <footer class="card-deck">
-        <div class="discard-area">🗑️ 버리기</div>
-        <div class="deck-button" id="deck">📚 덱</div>
+        <div class="discard-area"> 버리기</div>
+        <div class="deck-button" id="deck"> 덱</div>
         
     </footer>
 
     <!-- 우측 턴 & 날씨 바 -->
     <aside class="side-info">
         <div class="top-info">
-            <div class="day-count">404일차</div>
-            <div class="time-now">오류 04:04</div>
-            <div class="time-period">사이버</div>
-            <div class="weather">디버그 폭풍</div>
-            <div class="turn-info">턴: 404</div>
+            <div class="day-count"></div>
+            <div class="time-now"></div>
+            <div class="time-period"></div>
+            <div class="weather"></div>
+            <div class="turn-info"></div>
         </div>
     
-        <div class="end-turn-button">⏭️ 턴 넘기기</div>
+        <div class="end-turn-button">턴 넘기기</div>
     </aside>
     <script src="tod.js"></script>
 </body>

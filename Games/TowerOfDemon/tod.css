@@ -94,13 +94,13 @@ body {
 }
 
 .job-card {
-    width: 160px;
-    height: 220px;
+    width: 140px;
+    height: 200px;
     background: #2a2a2a;
     border: 2px solid #555;
     border-radius: 12px;
-    color: white;
-    padding: 12px;
+    color: rgb(198, 189, 163);
+    padding: 4px;
     box-sizing: border-box;
     box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.4);
     cursor: pointer;
@@ -113,8 +113,8 @@ body {
 }
 
 .job-card.selected {
-    background-color: #558888;
-    border-color: #aad;
+    background-color: #962222cd;
+    border-color: #be2727cd;
 }
 
 .job-card h4 {
@@ -126,7 +126,27 @@ body {
     font-size: 14px;
     line-height: 1.4;
 }
-
+.slot-disabled {
+    background-color: #333 !important;
+    color: #888;
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+#character-name, #character-gender{
+    background-color: rgb(198, 189, 163);
+    border: 4px double #962222cd;;
+    border-radius: 12px;
+    padding: 10px 14px;
+    color: #962222cd;
+    font-size: 16px;
+    width: 200px;
+    box-sizing: border-box;
+    outline: none;
+    appearance: none; /* 기본 화살표 제거 (지원되는 브라우저에서만) */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
 /* 기타 스타일 */
 .title-ui h3 {
     font-size: 20px;
@@ -142,7 +162,6 @@ body {
     justify-content: center;
     z-index: 1000;
 }
-
 .loading-text {
     color: white;
     font-size: 24px;
@@ -192,10 +211,56 @@ body {
 .title-button:hover {
     background-color: #96222259;
 }
-
+#slot-buttons button{
+    padding :4px;
+    min-height: 40px;
+}
 /* 게임 시작, 이어하기, 캐릭터 설정 화면에 대한 스타일 */
 #save-slot-selection, #character-setup {
     display: none;
+}
+/* 슬롯 정보 */
+.save-container {
+    background-color: #520d0d59; /* 어두운 그레이 배경 */
+    padding: 12px;
+    margin-top: 16px;
+    margin: 8px;
+    border-radius: 8px;
+    color: #f1f1f1; /* 텍스트 색상 */
+    font-size: 14px;
+}
+
+/* 슬롯 이름 및 직업 */
+.save-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+#save-name {
+    font-weight: bold;
+    color: #c9d9da;
+}
+
+#save-job {
+    font-style: italic;
+    color: #c9d9da;
+    text-align: right;
+}
+
+/* 구분선 */
+hr {
+    border: 0;
+    border-top: 1px solid #7f8c8d;
+    margin: 10px 0;
+}
+
+/* 저장 위치 및 저장 시간 */
+.save-details {
+    text-align: center;
+    font-size: 12px;
+    color: #95a5a6; /* 연한 회색으로 부드럽게 표시 */
 }
 
 .setting-group {
@@ -206,10 +271,32 @@ body {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
+    color: rgb(198, 189, 163);
 }
 .setting-group input[type=range] {
+    padding : 0;
+    -webkit-appearance: none;
     width: 100%;
+    height: 16px;
+    background: #ccc;
+    border-radius: 4px;
+    outline: none;
 }
+.setting-group input[type="range"]::-webkit-slider-runnable-track {
+    height: 16px;
+    background: rgb(198, 189, 163);
+    border-radius: 4px;
+  }
+  /* 네모난 핸들 (HP바처럼 꽉 찬 느낌) */
+  .setting-group input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 16px;
+    background: #962222cd; /* HP바처럼 그라데이션 색상 */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
 
 /* 각 UI 요소들 간의 간격 및 스타일 */
 .title-ui h2 {
@@ -229,11 +316,12 @@ input, select {
 
 button[type="submit"] {
     margin-top: 20px;
-    background-color: #559999;
+    background-color: #962222cd;
+    color:c6bd9f;
 }
 
 button[type="submit"]:hover {
-    background-color: #888888;
+    background-color: #e01f1fcd;
 }
 
 /* 상단 HUD */
@@ -357,11 +445,15 @@ button[type="submit"]:hover {
     background: #444;
     border: none;
     color: white;
-    padding: 8px 12px;
+    padding: 8px;
     border-radius: 6px;
     cursor: pointer;
+    transition: all 0.4s ease;
 }
 
+.player-tabs button:hover {
+    background-color:#962222cd;
+}
 .tab-content {
     padding: 10px;
 }
@@ -751,9 +843,12 @@ button[type="submit"]:hover {
 }
 
 .stat-block {
-    padding: 10px;
+    padding: 3px;
     background-color: #5e5e5e;
     border-radius: 10%;
+    color: white;
+    font-size: 20px;
+    padding-left:8px;
 }
 
 .stat-row {
@@ -762,13 +857,13 @@ button[type="submit"]:hover {
     align-items: center;
     margin: 6px 0;
     font-size: 20px;
+    color : white;
 }
 
 .stat-row button {
     margin-left: 10px;
     padding: 2px 12px;
     border-radius: 20px;
-    ;
     background-color: #222;
     color: rgb(255, 255, 255);
     font-size: 20px;
@@ -777,7 +872,7 @@ button[type="submit"]:hover {
 }
 
 .stat-row button:hover {
-    background-color: #666;
+    background-color: #962222cd;
 }
 
 .stat-row button:active {
@@ -810,4 +905,28 @@ button[type="submit"]:hover {
 
 .card-use-rect .use-text {
     pointer-events: none;
+}
+
+/* 전체 스크롤바 영역 */
+::-webkit-scrollbar {
+    width: 12px;  /* 세로 스크롤 너비 */
+    height: 12px; /* 가로 스크롤 높이 */
+}
+
+/* 스크롤바 트랙 (배경) */
+::-webkit-scrollbar-track {
+    background: #1e1e1e;
+    border-radius: 10px;
+}
+
+/* 스크롤바 핸들 (움직이는 부분) */
+::-webkit-scrollbar-thumb {
+    background: #962222cd;
+    border-radius: 10px;
+    border: 2px solid #1e1e1e; /* 트랙과 여백 줌 */
+}
+
+/* 스크롤바 핸들 Hover 시 */
+::-webkit-scrollbar-thumb:hover {
+    background: #aaa;
 }

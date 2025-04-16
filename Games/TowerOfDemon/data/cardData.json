@@ -1,0 +1,116 @@
+{
+    "guildCards": [
+        {
+            "name": "게시판 확인",
+            "effect": "의뢰 확인",
+            "description": "현재 접수 가능한 의뢰와 진행 중인 임무를 확인합니다.",
+            "image": "icons/board.png",
+            "undiscardable": true,
+            "type": "행동",
+            "cost": 0,
+            "usable": true,
+            "disposialAfterLeave": true,
+            "oneTimeUse": true,
+            "id": "guild_quest",
+            "tags": [
+                "길드",
+                "행동",
+                "게시판 확인"
+            ]
+        },
+        {
+            "name": "대화하기",
+            "effect": "길드원 교류",
+            "description": "길드 마스터나 다른 길드원들과 대화를 나눕니다.",
+            "image": "icons/chat.png",
+            "undiscardable": true,
+            "type": "행동",
+            "cost": 0,
+            "usable": true,
+            "disposialAfterLeave": true,
+            "oneTimeUse": false,
+            "id": "guild_talk",
+            "tags": [
+                "길드",
+                "행동",
+                "대화하기"
+            ]
+        },
+        {
+            "name": "길드 나가기",
+            "effect": "마을 이동",
+            "description": "길드를 나와 마을로 돌아갑니다.",
+            "image": "icons/doorOut.png",
+            "undiscardable": true,
+            "type": "행동",
+            "cost": 0,
+            "usable": true,
+            "disposialAfterLeave": true,
+            "oneTimeUse": false,
+            "id": "guild_leave",
+            "tags": [
+                "길드",
+                "행동",
+                "마을이동"
+            ]
+        }
+    ],
+    "guildQuestSet": [
+        {
+            "name": "퀘스트",
+            "effect": "슬라임 소탕",
+            "description": "요즘 슬라임의 수가 너무 많소. 세 놈만 잡으면, 두둑히 보수하겠소.",
+            "image": "icons/quest.png",
+            "undiscardable": true,
+            "type": "소탕 퀘스트",
+            "cost": 0,
+            "usable": true,
+            "disposialAfterLeave": true,
+            "oneTimeUse": true,
+            "id": "quest1",
+            "tags": [
+                "퀘스트",
+                "초보자",
+                "전투",
+                "소탕"
+            ]
+        },
+        {
+            "name": "퀘스트.",
+            "effect": "원자재 조달",
+            "description": "구리 원석을 4개 구해서 대장간으로 가져와 주게나. 보수는.. 200G 즈음 주겠네.",
+            "image": "icons/quest.png",
+            "undiscardable": true,
+            "type": "수집 퀘스트",
+            "cost": 0,
+            "usable": true,
+            "disposialAfterLeave": true,
+            "oneTimeUse": true,
+            "id": "quest2",
+            "tags": [
+                "퀘스트",
+                "초보자",
+                "비전투",
+                "수집"
+            ]
+        },
+        {
+            "name": "돌아가기",
+            "effect": "마을로 돌아가기",
+            "description": "퀘스트를 마친 후 마을로 돌아갑니다.",
+            "image": "icons/doorOut.png",
+            "undiscardable": true,
+            "type": "행동",
+            "cost": 0,
+            "usable": false,
+            "disposialAfterLeave": true,
+            "oneTimeUse": false,
+            "id": "back_to_town",
+            "tags": [
+                "길드",
+                "행동",
+                "돌아가기"
+            ]
+        }
+    ]
+}
