@@ -129,7 +129,7 @@ function switchBGM(newSrc) {
 }
 
 function playNewBGM(src) {
-    bgm.src = src;
+    bgm.src = 'bgm/background/'+src;
     bgm.loop = true;
     fadeInAudio(bgm, 1000); // 1초 동안 페이드 인
 }
